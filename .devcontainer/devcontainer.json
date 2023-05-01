@@ -1,0 +1,73 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.234.0/containers/python-3
+{
+  "name": "tgm_dev",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  // Set *default* container specific settings.json values on container create.
+  // Add the IDs of extensions you want installed when the container is created.
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "emeraldwalk.RunOnSave",
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode"
+      ],
+      "settings": {
+        "editor.defaultFormatter": null,
+        "editor.formatOnSave": true,
+        "editor.rulers": [120],
+        "emeraldwalk.runonsave": {
+          "shell": "/bin/sh",
+          "commands": [
+            {
+              "match": ".py",
+              "isAsync": true,
+              "cmd": "(cd /workspaces/tgm/backend && poetry run pydocstringformatter ${file} -w && poetry run isort ${file} && poetry run black ${file})"
+            }
+          ]
+        },
+        "eslint.run": "onType",
+        // "eslint.options": {
+        //   "overrideConfigFile": "./frontend/.eslintrc.json"
+        // },
+        // "eslint.nodePath": "./frontend/node_modules",
+        "[javascript]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.codeActionsOnSave": [
+            "source.addMissingImports",
+            "source.fixAll.eslint"
+          ]
+        },
+        "[typescript]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.codeActionsOnSave": [
+            "source.addMissingImports",
+            "source.fixAll.eslint"
+          ]
+        },
+        "[typescriptreact]": {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.codeActionsOnSave": [
+            "source.addMissingImports",
+            "source.fixAll.eslint"
+          ]
+        },
+        // "prettier.ignorePath": "./frontend/.prettierignore",
+        "python.analysis.extraPaths": [
+          "/workspaces/tgm/backend/.venv/lib/python3.9/site-packages" //相対パスNG
+        ]
+      }
+    }
+  },
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "chmod 755 ./.devcontainer/init.sh && ./.devcontainer/init.sh"
+  // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  // "remoteUser": "vscode"
+}

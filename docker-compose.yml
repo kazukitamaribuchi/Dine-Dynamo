@@ -1,0 +1,31 @@
+version: "3"
+
+services:
+  backend:
+    container_name: tgm-backend-container
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./backend:/home/api
+    ports:
+      - "0.0.0.0:8080:8080"
+    env_file:
+      - .env
+  frontend:
+    container_name: tgm-frontend-container
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    tty: true
+    volumes:
+      - ./frontend:/home/app
+    environment:
+      - WATCHPACK_POLLING=true
+    expose:
+      - "8000"
+    ports:
+      - "0.0.0.0:8000:8000"
+    env_file:
+      - .env
