@@ -1,6 +1,8 @@
 from django.contrib import admin
 
-from .models import AccessToken, User
+from .models import Facebook, Instagram, Twitter, User
 
 admin.site.register(User)
-admin.site.register(AccessToken)
+admin.site.register(Instagram)
+admin.site.register(Facebook)
+admin.site.register(Twitter)

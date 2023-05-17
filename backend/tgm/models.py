@@ -6,7 +6,7 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from .core.models import AbstractTimeStamp
+from .core.models import AbstractSNSInfomation, AbstractTimeStamp
 
 logger = logging.getLogger(__name__)
 
@@ -105,17 +105,23 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractTimeStamp):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
-class AccessToken(AbstractTimeStamp):
-    """アクセストークン情報."""
+class Instagram(AbstractTimeStamp, AbstractSNSInfomation):
+    """ユーザーのInstagramの情報.
 
-    SERVICE_CHOICES = (
-        (0, "Instagram"),
-        (1, "Facebook"),
-        (2, "Twitter"),
-        (3, "Google Business Profile"),
-        (4, "Chatgpt"),
-    )
+    business_account_id: グラフAPIに必要なビジネスid
+    """
 
-    service = models.IntegerField(choices=SERVICE_CHOICES)
-    token = models.TextField(unique=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ManyToManyField(User)
+    business_account_id = models.TextField(unique=True)
+
+
+class Facebook(AbstractTimeStamp, AbstractSNSInfomation):
+    """ユーザーのFacebookの情報."""
+
+    user = models.ManyToManyField(User)
+
+
+class Twitter(AbstractTimeStamp, AbstractSNSInfomation):
+    """ユーザーのTwitterの情報."""
+
+    user = models.ManyToManyField(User)

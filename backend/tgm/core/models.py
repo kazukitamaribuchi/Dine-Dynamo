@@ -14,3 +14,21 @@ class AbstractTimeStamp(models.Model):
 
     class Meta:
         abstract = True
+
+
+class AbstractSNSInfomation(models.Model):
+    """連携するSNS情報の基礎抽象クラス.
+
+    account_id: SNSのid
+    username: SNSのusername
+
+    token: SNSのアクセストークン
+    """
+
+    account_id = models.TextField()
+    username = models.TextField()
+
+    token = models.TextField(unique=True)
+
+    class Meta:
+        abstract = True
