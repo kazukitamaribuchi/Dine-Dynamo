@@ -111,17 +111,26 @@ class Instagram(AbstractTimeStamp, AbstractSNSInfomation):
     business_account_id: グラフAPIに必要なビジネスid
     """
 
-    user = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     business_account_id = models.TextField(unique=True)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Facebook(AbstractTimeStamp, AbstractSNSInfomation):
     """ユーザーのFacebookの情報."""
 
-    user = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Twitter(AbstractTimeStamp, AbstractSNSInfomation):
     """ユーザーのTwitterの情報."""
 
-    user = models.ManyToManyField(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
