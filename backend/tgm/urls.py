@@ -9,6 +9,8 @@ router.register("facebook", viewsets.FacebookViewSet, basename="facebook")
 router.register("twitter", viewsets.TwitterViewSet, basename="twitter")
 
 
+router.register("user", viewsets.UserViewSet)
+
 app_name = "tgm"
 
 urlpatterns = [
