@@ -31,10 +31,10 @@
           ]
         },
         "eslint.run": "onType",
-        // "eslint.options": {
-        //   "overrideConfigFile": "./frontend/.eslintrc.json"
-        // },
-        // "eslint.nodePath": "./frontend/node_modules",
+        "eslint.options": {
+          "overrideConfigFile": "./frontend/.eslintrc.json"
+        },
+        "eslint.nodePath": "./frontend/node_modules",
         "[javascript]": {
           "editor.formatOnSave": true,
           "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -59,7 +59,7 @@
             "source.fixAll.eslint"
           ]
         },
-        // "prettier.ignorePath": "./frontend/.prettierignore",
+        "prettier.ignorePath": "./frontend/.prettierignore",
         "python.analysis.extraPaths": [
           "/workspaces/tgm/backend/.venv/lib/python3.9/site-packages" //相対パスNG
         ]

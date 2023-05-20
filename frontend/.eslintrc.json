@@ -1,3 +1,52 @@
 {
-  "extends": ["next", "next/core-web-vitals", "prettier", "next/babel"]
+  "root": true,
+  "plugins": ["import", "unused-imports", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "sourceType": "module",
+    "project": ["./frontend/tsconfig.json"]
+  },
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
+  "rules": {
+    "indent": "off",
+    "camelcase": "off",
+    "dot-notation": "error",
+    "eqeqeq": "error",
+    "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],
+    "no-implicit-globals": ["error", { "lexicalBindings": true }],
+    "no-useless-return": "error",
+    "no-var": "error",
+    "object-shorthand": "error",
+    "prefer-arrow-callback": "error",
+    "prefer-const": "error",
+    "prefer-template": "error",
+    "strict": ["error", "global"],
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": ["typeProperty"],
+        "format": ["camelCase", "snake_case"]
+      }
+    ],
+    "unused-imports/no-unused-imports": "error",
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin", // node "builtin" のモジュール
+          "external", // npm install したパッケージ
+          "internal", // パス設定したモジュール
+          ["parent", "sibling"], // 親階層と子階層のファイル
+          "index", // 同階層のファイル
+          "object", // object-imports
+          "type" // 型のみインポート
+        ],
+        "newlines-between": "always", // グループごとに空行を挿入
+        "alphabetize": {
+          "order": "asc" // アルファベット順
+        }
+      }
+    ]
+  }
 }
