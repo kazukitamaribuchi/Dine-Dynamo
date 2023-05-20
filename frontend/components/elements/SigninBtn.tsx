@@ -4,8 +4,8 @@ import Link from "next/link";
 
 export const SigninBtn = () => {
   return (
-    <Button type="primary">
-      <Link href="/api/auth/login">Signin</Link>
-    </Button>
+    <Link href="/api/auth/login">
+      <Button type="primary">Signin</Button>
+    </Link>
   );
 };

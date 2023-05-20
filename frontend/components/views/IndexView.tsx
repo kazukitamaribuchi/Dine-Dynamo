@@ -6,6 +6,8 @@ import { SigninBtn } from "../elements/SigninBtn";
 import { useUser } from "@auth0/nextjs-auth0/client";
 import { SignoutBtn } from "../elements/SignoutBtn";
 import { SignoutIconBtn } from "../elements/SignoutIconBtn";
+import { UserIcon } from "../elements/UserIcon";
+import { SigninoutArea } from "../parts/SigninoutArea";
 
 export default function IndexView() {
   const { user, error, isLoading } = useUser();
@@ -19,6 +21,9 @@ export default function IndexView() {
       <SigninBtn />
       <SignoutBtn />
       <SignoutIconBtn />
+
+      <div></div>
+      <SigninoutArea />
     </BaseView>
   );
 }
