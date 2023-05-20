@@ -25,8 +25,8 @@ class AbstractSNSInfomation(models.Model):
     token: SNSのアクセストークン
     """
 
-    account_id = models.TextField()
-    username = models.TextField()
+    account_id = models.TextField(null=True, blank=True)
+    username = models.TextField(null=True, blank=True)
 
     token = models.TextField(unique=True)
 

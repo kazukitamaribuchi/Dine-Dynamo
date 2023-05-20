@@ -2,27 +2,23 @@ import logging
 
 from django.contrib.auth.management.commands import createsuperuser
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="""%(levelname)s %(asctime)s %(pathname)s:%(funcName)s:%(lineno)s
-    %(message)s""",
-)
+from ...models import User
 
 logger = logging.getLogger(__name__)
 
 
 class Command(createsuperuser.Command):
-    help = "Auth0のスーパーユーザーを作成するコマンド"
+    help = "管理者アカウントを作成するコマンド"
 
     def handle(self, *args, **options):
         options.setdefault("interactive", False)
 
-        auth0_id = "test"
-        auth0_name = "test"
+        auth0_id = "admin"
+        auth0_name = "admin"
 
-        username = "test"
-        email = "test@gmail.com"
-        password = "testAa1@"
+        username = "admin"
+        email = "admin@gmail.com"
+        password = "adminAa1@"
 
         database = options.get("database")
 
@@ -35,12 +31,11 @@ class Command(createsuperuser.Command):
                 "password": password,
             }
 
-            exists = (
-                self.UserModel._default_manager.db_manager(database)
-                .filter(username=username)
-                .exists()
-            )
-            if not exists:
+            try:
+                User.objects.get(auth0_id=username)
+            except User.DoesNotExist:
+                logger.debug("管理者アカウントを作成します。")
+
                 self.UserModel._default_manager.db_manager(database).create_superuser(
                     **user_data
                 )
