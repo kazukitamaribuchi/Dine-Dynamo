@@ -62,13 +62,20 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractTimeStamp):
     deleted_at: 削除日時
     """
 
-    auth0_id = models.CharField(_("Auth0Id"), max_length=255, unique=True)
+    auth0_id = models.CharField(_("Auth0Id"), max_length=255, primary_key=True)
     auth0_name = models.CharField(_("Username"), max_length=70, blank=True, null=True)
 
     username = models.CharField(
         _("Username"), max_length=70, unique=True, blank=True, null=True
     )
     email = models.EmailField(_("Email"), max_length=70, unique=True)
+    email_verified = models.BooleanField(
+        _("whether the email is verified or not"), default=False
+    )
+
+    phone_number = models.CharField(
+        _("Phone Number"), max_length=15, blank=True, null=True
+    )
     address = models.CharField(_("Address"), max_length=100, blank=True, null=True)
 
     is_staff = models.BooleanField(
