@@ -5,19 +5,61 @@ from pathlib import Path
 
 import environ
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="""%(levelname)s %(asctime)s %(pathname)s:%(funcName)s 行数:%(lineno)s:%(lineno)s
-    %(message)s""",
-)
-
-logger = logging.getLogger(__name__)
-
 # TODO envの扱い方
 # env = environ.Env()
 # env.read_env("./env")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": """%(levelname)s %(asctime)s %(pathname)s:%(funcName)s 行数:%(lineno)s:%(lineno)s
+%(message)s"""
+        }
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+        # "debug": {
+        #     "level": "DEBUG",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, "log/debug.log"),
+        #     "formatter": "simple",
+        # },
+        # "info": {
+        #     "level": "INFO",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, "log/info.log"),
+        #     "formatter": "simple",
+        # },
+        # "warning": {
+        #     "level": "WARNING",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, "log/warning.log"),
+        #     "formatter": "simple",
+        # },
+        # "error": {
+        #     "level": "ERROR",
+        #     "class": "logging.FileHandler",
+        #     "filename": os.path.join(BASE_DIR, "log/error.log"),
+        #     "formatter": "simple",
+        # },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+}
+
+
+logger = logging.getLogger(__name__)
 
 
 # SECRET_KEY = env("SECRET_KEY")
