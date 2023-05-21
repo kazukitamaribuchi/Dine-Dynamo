@@ -5,7 +5,7 @@ import Link from "next/link";
 export const SigninBtn = () => {
   return (
     <Link href="/api/auth/login">
-      <Button type="primary">Signin</Button>
+      <Button type="text">Signin</Button>
     </Link>
   );
 };

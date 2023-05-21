@@ -1,13 +1,17 @@
-import { Button } from "antd";
-
 import { SigninBtn } from "../elements/SigninBtn";
 
-import Link from "next/link";
 import { UserIcon } from "../elements/UserIcon";
 import { SignoutIconBtn } from "../elements/SignoutIconBtn";
 import { useState } from "react";
 
-export const SigninoutArea = () => {
+import { LoadingSpin } from "../elements/LoadingSpin";
+
+interface Props {
+  isChecking: boolean;
+  isLogin: boolean;
+}
+
+export const SigninoutArea = (props: Props) => {
   // ログインしている => usericon + signout
   // ログインしていない => signin
 
@@ -21,10 +25,26 @@ export const SigninoutArea = () => {
     setIsModalOpen(false);
   };
 
-  return (
-    <>
-      <UserIcon />
-      <SignoutIconBtn />
-    </>
-  );
+  if (props.isChecking) {
+    return (
+      <>
+        <LoadingSpin />
+      </>
+    );
+  }
+
+  if (props.isLogin) {
+    return (
+      <>
+        <UserIcon />
+        <SignoutIconBtn />
+      </>
+    );
+  } else {
+    return (
+      <>
+        <SigninBtn />
+      </>
+    );
+  }
 };
