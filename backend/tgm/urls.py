@@ -7,7 +7,7 @@ router = DefaultRouter()
 router.register("instagram", viewsets.InstagramViewSet, basename="instagram")
 router.register("facebook", viewsets.FacebookViewSet, basename="facebook")
 router.register("twitter", viewsets.TwitterViewSet, basename="twitter")
-
+router.register("auth", viewsets.AuthViewSet, basename="auth")
 
 router.register("user", viewsets.UserViewSet)
 

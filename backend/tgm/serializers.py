@@ -30,6 +30,7 @@ class UserSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "auth0_id",
             "auth0_name",
             "username",

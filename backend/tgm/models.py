@@ -62,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractTimeStamp):
     deleted_at: 削除日時
     """
 
-    auth0_id = models.CharField(_("Auth0Id"), max_length=255, primary_key=True)
+    auth0_id = models.CharField(_("Auth0Id"), max_length=255, unique=True)
     auth0_name = models.CharField(_("Username"), max_length=70, blank=True, null=True)
 
     username = models.CharField(
