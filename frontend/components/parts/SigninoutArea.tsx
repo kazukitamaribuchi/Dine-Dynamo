@@ -1,13 +1,12 @@
-import { SigninBtn } from "../elements/SigninBtn";
+import { SignInBtn } from "../elements/SignInBtn";
 
 import { UserIcon } from "../elements/UserIcon";
-import { SignoutIconBtn } from "../elements/SignoutIconBtn";
+import { SignOutIconBtn } from "../elements/SignOutIconBtn";
 import { useState } from "react";
 
 import { LoadingSpin } from "../elements/LoadingSpin";
 
 interface Props {
-  isChecking: boolean;
   isLogin: boolean;
 }
 
@@ -25,25 +24,17 @@ export const SigninoutArea = (props: Props) => {
     setIsModalOpen(false);
   };
 
-  if (props.isChecking) {
-    return (
-      <>
-        <LoadingSpin />
-      </>
-    );
-  }
-
   if (props.isLogin) {
     return (
       <>
         <UserIcon />
-        <SignoutIconBtn />
+        <SignOutIconBtn />
       </>
     );
   } else {
     return (
       <>
-        <SigninBtn />
+        <SignInBtn />
       </>
     );
   }

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth0/auth0-react": "^2.1.0",
     "@auth0/nextjs-auth0": "^2.5.0",
     "@types/node": "18.16.3",
     "@types/react": "18.2.0",
@@ -27,6 +28,7 @@
     "react-icons": "^4.8.0",
     "sass": "^1.62.1",
     "styled-components": "^6.0.0-rc.1",
+    "swr": "^2.1.5",
     "tailwindcss": "3.3.2",
     "typescript": "5.0.4"
   }
