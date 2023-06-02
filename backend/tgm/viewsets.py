@@ -10,7 +10,7 @@ from rest_framework import (
     viewsets,
 )
 from rest_framework.decorators import action, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AuthViewSet(viewsets.ViewSet):
     """認証のViewSet."""
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
 
     @action(detail=False, methods=["post"])
     def jwt(self, request):
@@ -65,7 +65,7 @@ class AuthViewSet(viewsets.ViewSet):
 class InstagramViewSet(viewsets.ViewSet):
     """Instagram Viewset."""
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
 
     def list(self, request):
         """トップページ."""
@@ -83,7 +83,7 @@ class InstagramViewSet(viewsets.ViewSet):
 class FacebookViewSet(viewsets.ViewSet):
     """Facebook Viewset."""
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
 
     def list(self, request):
         """トップページ."""
@@ -93,7 +93,7 @@ class FacebookViewSet(viewsets.ViewSet):
 class TwitterViewSet(viewsets.ViewSet):
     """Twitter Viewset."""
 
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (AllowAny,)
 
     def list(self, request):
         """トップページ."""
@@ -107,7 +107,11 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
 
-    # TODO retriveとかでもauth0_idを元に検索するようにする
+    def retrieve(self, request, *args, **kwargs):
+        auth0_id = self.kwargs["pk"]
+        instance = User.objects.get(auth0_id=auth0_id)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=False)
     def auth0_signup(self, request):
