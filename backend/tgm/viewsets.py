@@ -155,19 +155,16 @@ class UserViewSet(viewsets.ModelViewSet):
 
         logger.debug("request.data: {}".format(request.data))
 
-        secret_key, client_id = (
-            os.environ["AUTH0_SECRET"],
-            os.environ["AUTH0_CLIENT_ID"],
-        )
+        try:
+            auth0_id = request.data["auth0_id"]
 
+        except KeyError as e:
+            logger.error(e)
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        secret_key = os.environ["AUTH0_SECRET"]
         signature = request.headers.get("X-Signature")
-
-        hmac_obj = hmac.new(
-            secret_key.encode(),
-            client_id.encode(),
-            hashlib.sha256,
-        )
-
+        hmac_obj = hmac.new(secret_key.encode(), auth0_id.encode(), hashlib.sha256)
         calculated_signature = base64.b64encode(hmac_obj.digest()).decode()
 
         if not hmac.compare_digest(signature, calculated_signature):
@@ -183,12 +180,13 @@ class UserViewSet(viewsets.ModelViewSet):
                 self.perform_create(serializer)
 
                 # TODO 認証メール送信
-
                 return Response(status.HTTP_201_CREATED)
 
         except Exception as e:
             logger.error("リクエストが正しい形式でないため、ユーザー登録に失敗しました。")
             return Response(status.HTTP_400_BAD_REQUEST)
+
+        return Response(status.HTTP_200_OK)
 
     @action(methods=["post"], detail=False, permission_classes=[AllowAny])
     def auth0_login(self, request):
@@ -202,27 +200,21 @@ class UserViewSet(viewsets.ModelViewSet):
 
         logger.debug("request.data: {}".format(request.data))
 
-        secret_key, client_id = (
-            os.environ["AUTH0_SECRET"],
-            os.environ["AUTH0_CLIENT_ID"],
-        )
-
-        signature = request.headers.get("X-Signature")
-
-        hmac_obj = hmac.new(secret_key.encode(), client_id.encode(), hashlib.sha256)
-
-        calculated_signature = base64.b64encode(hmac_obj.digest()).decode()
-
-        if not hmac.compare_digest(signature, calculated_signature):
-            logger.warning("トークンが不正な形式です。")
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
         try:
             auth0_id = request.data["auth0_id"]
 
         except KeyError as e:
             logger.error(e)
             return Response(status.HTTP_400_BAD_REQUEST)
+
+        secret_key = os.environ["AUTH0_SECRET"]
+        signature = request.headers.get("X-Signature")
+        hmac_obj = hmac.new(secret_key.encode(), auth0_id.encode(), hashlib.sha256)
+        calculated_signature = base64.b64encode(hmac_obj.digest()).decode()
+
+        if not hmac.compare_digest(signature, calculated_signature):
+            logger.warning("トークンが不正な形式です。")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
             User.objects.get(auth0_id=auth0_id)
