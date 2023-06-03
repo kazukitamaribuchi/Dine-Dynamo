@@ -3,17 +3,17 @@ import BaseView from "./BaseView";
 import { Header } from "../templates/Header";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
-import { loginUserAtom } from "@/store/atoms";
+import { loginUserAtom, loginUserIdAtom } from "@/store/atoms";
 
 export default function IndexView() {
-  const [loginUser] = useAtom(loginUserAtom);
+  const [loginUserId] = useAtom(loginUserIdAtom);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    if (loginUser != null) {
+    if (loginUserId != null) {
       setIsAuthenticated(true);
     }
-  }, [loginUser]);
+  }, [loginUserId]);
 
   return (
     <BaseView title="index">

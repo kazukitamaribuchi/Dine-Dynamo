@@ -5,6 +5,7 @@ import {
   loginUserAtom,
   loginUserAccessTokenAtom,
   loginUserIdAtom,
+  loginUserRefreshTokenAtom,
 } from "@/store/atoms";
 import { useAtom } from "jotai";
 
@@ -17,6 +18,9 @@ export const SignOutBtn = () => {
   const [loginUserAccessToken, setLoginUserAccessToken] = useAtom(
     loginUserAccessTokenAtom
   );
+  const [loginUserRefreshToken, setLoginUserRefreshToken] = useAtom(
+    loginUserRefreshTokenAtom
+  );
 
   // TODO envから取得するようにする
   const redirectUrl = "http://localhost:8000/";
@@ -25,6 +29,7 @@ export const SignOutBtn = () => {
     setLoginUserId(null);
     setLoginUser(null);
     setLoginUserAccessToken(null);
+    setLoginUserRefreshToken(null);
   };
 
   const showConfirm = () => {
