@@ -13,6 +13,11 @@ from rest_framework.decorators import action, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.serializers import (
+    TokenRefreshSerializer,
+    TokenVerifySerializer,
+)
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Facebook, Instagram, Twitter, User
@@ -27,7 +32,7 @@ class AuthViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
 
     @action(detail=False, methods=["post"])
-    def jwt(self, request):
+    def token(self, request):
         """トークン発行のエンドポイント.
 
         DBに存在するユーザーならアクセストークンを発行する。
@@ -47,11 +52,7 @@ class AuthViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         try:
-            # TODO 有効期限とか
             refresh = RefreshToken.for_user(user)
-            # logger.info(refresh)
-            # logger.info(dir(refresh))
-            # logger.info(refresh.check_exp)
             token = {
                 "refresh_token": str(refresh),
                 "access_token": str(refresh.access_token),
@@ -60,6 +61,28 @@ class AuthViewSet(viewsets.ViewSet):
         except:
             logger.error("トークン生成処理でエラーが発生しました。")
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=False, methods=["post"], url_path="token/refresh")
+    def refresh_token(self, request):
+        """リフレッシュトークンを元にアクセストークンを再発行するエンドポイント."""
+
+        serializer = TokenRefreshSerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        except TokenError as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": str(e)})
+
+    @action(detail=False, methods=["post"], url_path="token/verify")
+    def verify_token(self, request):
+        """トークン検証用のエンドポイント."""
+
+        serializer = TokenVerifySerializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+            return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        except TokenError as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={"detail": str(e)})
 
 
 class InstagramViewSet(viewsets.ViewSet):
@@ -105,9 +128,12 @@ class UserViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, *args, **kwargs):
+        logger.info("★★★★★★★★★★★★★★★★★★★★★★")
+        logger.info(self.kwargs)
+
         auth0_id = self.kwargs["pk"]
         instance = User.objects.get(auth0_id=auth0_id)
         serializer = self.get_serializer(instance)

@@ -1,14 +1,34 @@
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
 import {
-  IsLoadingUserInfoAtom,
+  IsLoadingData,
+  IsCheckingAuthData,
   LoginUserIdAtom,
   LoginUserAccessTokenAtom,
   LoginUserAtom,
+  LoginUserAuth0AccessTokenAtom,
+  LoginUserRefreshTokenAtom,
+  LoginUserAccessTokenExpAtom,
 } from "@/types";
 
-export const loginUserIdAtom = atom<LoginUserIdAtom>(null);
-export const loginUserAccessTokenAtom = atom<LoginUserAccessTokenAtom>("");
-export const isLoadingUserInfoAtom = atom<IsLoadingUserInfoAtom>(false);
+export const isLoadingDataAtom = atom<IsLoadingData>(false);
+export const isCheckingAuthAtom = atom<IsCheckingAuthData>(false);
+
+export const loginUserIdAtom = atomWithStorage<LoginUserIdAtom>(
+  "loginUserId",
+  null
+);
+
+export const loginUserAccessTokenAtom =
+  atomWithStorage<LoginUserAccessTokenAtom>("loginUserAccessToken", null);
+export const loginUserRefreshTokenAtom =
+  atomWithStorage<LoginUserRefreshTokenAtom>("loginUserRefreshToken", null);
+
+export const loginUserAccessTokenExpAtom =
+  atomWithStorage<LoginUserAccessTokenExpAtom>("loginUserAccessTokenExp", null);
 
 export const loginUserAtom = atom<LoginUserAtom>(null);
+
+export const loginUserAuth0AccessTokenAtom =
+  atom<LoginUserAuth0AccessTokenAtom>(null);

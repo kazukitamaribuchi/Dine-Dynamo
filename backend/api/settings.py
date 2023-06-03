@@ -1,6 +1,7 @@
 import datetime
 import logging
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -93,6 +94,18 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+SIMPLE_JWT = {
+    # アクセストークン(1時間)
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    # リフレッシュトークン(3日)
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    # 認証タイプ
+    "AUTH_HEADER_TYPES": ("Bearer",),
+    # 認証トークン
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+}
+
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
