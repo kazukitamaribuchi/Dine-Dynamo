@@ -1,4 +1,8 @@
+import base64
+import hashlib
+import hmac
 import logging
+import os
 
 from rest_framework import (
     authentication,
@@ -139,7 +143,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    @action(methods=["post"], detail=False)
+    @action(methods=["post"], detail=False, permission_classes=[AllowAny])
     def auth0_signup(self, request):
         """Auth0のsignup.
 
@@ -150,6 +154,25 @@ class UserViewSet(viewsets.ModelViewSet):
         """
 
         logger.debug("request.data: {}".format(request.data))
+
+        secret_key, client_id = (
+            os.environ["AUTH0_SECRET"],
+            os.environ["AUTH0_CLIENT_ID"],
+        )
+
+        signature = request.headers.get("X-Signature")
+
+        hmac_obj = hmac.new(
+            secret_key.encode(),
+            client_id.encode(),
+            hashlib.sha256,
+        )
+
+        calculated_signature = base64.b64encode(hmac_obj.digest()).decode()
+
+        if not hmac.compare_digest(signature, calculated_signature):
+            logger.warning("トークンが不正な形式です。")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
             serializer = self.get_serializer(data=request.data)
@@ -167,7 +190,7 @@ class UserViewSet(viewsets.ModelViewSet):
             logger.error("リクエストが正しい形式でないため、ユーザー登録に失敗しました。")
             return Response(status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=["post"], detail=False)
+    @action(methods=["post"], detail=False, permission_classes=[AllowAny])
     def auth0_login(self, request):
         """Auth0のlogin.
 
@@ -178,6 +201,21 @@ class UserViewSet(viewsets.ModelViewSet):
         """
 
         logger.debug("request.data: {}".format(request.data))
+
+        secret_key, client_id = (
+            os.environ["AUTH0_SECRET"],
+            os.environ["AUTH0_CLIENT_ID"],
+        )
+
+        signature = request.headers.get("X-Signature")
+
+        hmac_obj = hmac.new(secret_key.encode(), client_id.encode(), hashlib.sha256)
+
+        calculated_signature = base64.b64encode(hmac_obj.digest()).decode()
+
+        if not hmac.compare_digest(signature, calculated_signature):
+            logger.warning("トークンが不正な形式です。")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
         try:
             auth0_id = request.data["auth0_id"]
