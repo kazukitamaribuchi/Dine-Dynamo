@@ -112,32 +112,97 @@ class User(AbstractBaseUser, PermissionsMixin, AbstractTimeStamp):
         send_mail(subject, message, from_email, [self.email], **kwargs)
 
 
+class Tenant(AbstractTimeStamp):
+    """ユーザー毎のレストランや店など.
+
+    レストランや店はそれぞれSNS1つにつき、アカウント1つと紐づく
+    """
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+    # TODO 住所などはいる？
+
+    def __str__(self):
+        return self.name
+
+
+class UserSetting(AbstractTimeStamp):
+    """ユーザー毎の設定."""
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+
+class TenantSetting(AbstractTimeStamp):
+    """テナント毎の設定."""
+
+    tenant = models.OneToOneField(Tenant, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.tenant.name
+
+
+class LinkedService(models.Model):
+    """連携サービス一覧."""
+
+    SERVICES_CHOICES = (
+        ("instagram", "Instagram"),
+        ("facebook", "Facebook"),
+        ("twitter", "Twitter"),
+        ("google business profile", "Google Business Profile"),
+    )
+    name = models.CharField(max_length=50, choices=SERVICES_CHOICES)
+
+    def __str__(self):
+        return self.name
+
+
+class Notification(AbstractTimeStamp):
+    """通知情報."""
+
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    linked_service = models.ForeignKey(LinkedService, on_delete=models.CASCADE)
+
+    LEVEL_CHOICES = (
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+    )
+    level = models.IntegerField(choices=LEVEL_CHOICES)
+    read = models.BooleanField(default=False)
+
+
 class Instagram(AbstractTimeStamp, AbstractSNSInfomation):
     """ユーザーのInstagramの情報.
 
     business_account_id: グラフAPIに必要なビジネスid
     """
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tenant = models.OneToOneField(Tenant, on_delete=models.CASCADE)
     business_account_id = models.TextField(unique=True)
 
     def __str__(self):
-        return self.user.username
+        return self.tenant.name
 
 
 class Facebook(AbstractTimeStamp, AbstractSNSInfomation):
     """ユーザーのFacebookの情報."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tenant = models.OneToOneField(Tenant, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.username
+        return self.tenant.name
 
 
 class Twitter(AbstractTimeStamp, AbstractSNSInfomation):
     """ユーザーのTwitterの情報."""
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tenant = models.OneToOneField(Tenant, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.user.username
+        return self.tenant.name
