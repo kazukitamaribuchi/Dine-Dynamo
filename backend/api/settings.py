@@ -191,6 +191,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Stripeのパブリックキー
+STRIPE_PUBLIC_KEY = os.environ.get("STRIPE_PUBLIC_KEY")
+# Stripeのシークレットキー
+STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+# StripeのWebhookのシークレットキー
+STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -220,6 +228,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# Email設定
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CORS_ORIGIN_ALLOW_ALL = True
 

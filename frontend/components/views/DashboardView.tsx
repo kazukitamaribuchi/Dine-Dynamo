@@ -7,8 +7,10 @@ import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
+import { useEffect } from "react";
+import axios from "axios";
 
-export default function DashBoardView() {
+export default function DashBoardView(props) {
   const [loginUserId] = useAtom(loginUserIdAtom);
 
   const { finalToken: token, error: accessTokenError } = useAccessToken();
@@ -19,6 +21,8 @@ export default function DashBoardView() {
   });
 
   console.log("userDetail: ", userDetail);
+
+  console.log("subscription: ", props);
 
   return (
     <AuthView>
