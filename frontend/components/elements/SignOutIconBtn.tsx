@@ -49,6 +49,7 @@ export const SignOutIconBtn = () => {
   return (
     <Tooltip title="signout">
       <Button
+        style={{ display: "block" }}
         type="text"
         shape="circle"
         icon={<VscSignOut />}

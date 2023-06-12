@@ -1,9 +1,10 @@
 import BaseView from "./BaseView";
 
-import { Header } from "../templates/Header";
+import { CommonHeader } from "../templates/Header";
 import { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { loginUserAtom, loginUserIdAtom } from "@/store/atoms";
+import { Header } from "antd/es/layout/layout";
 
 export default function IndexView() {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -17,8 +18,7 @@ export default function IndexView() {
 
   return (
     <BaseView title="index">
-      <Header isLogin={isAuthenticated} />
-      <div>index</div>
+      <CommonHeader isLogin={isAuthenticated} />
     </BaseView>
   );
 }

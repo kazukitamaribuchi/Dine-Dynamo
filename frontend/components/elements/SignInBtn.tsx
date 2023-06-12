@@ -5,7 +5,11 @@ export const SignInBtn = () => {
   const { loginWithRedirect } = useAuth0();
 
   return (
-    <Button type="text" onClick={() => loginWithRedirect()}>
+    <Button
+      style={{ display: "block" }}
+      type="text"
+      onClick={() => loginWithRedirect()}
+    >
       Sign in
     </Button>
   );

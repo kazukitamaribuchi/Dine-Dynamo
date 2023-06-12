@@ -1,4 +1,5 @@
 import { Button, Modal } from "antd";
+import { LogoutOutlined } from "@ant-design/icons";
 
 import { useAuth0 } from "@auth0/auth0-react";
 import {
@@ -44,8 +45,13 @@ export const SignOutBtn = () => {
   };
 
   return (
-    <Button type="text" onClick={showConfirm}>
-      Signout
+    <Button
+      type="text"
+      icon={<LogoutOutlined />}
+      onClick={showConfirm}
+      style={{ height: "40px", width: "100%", textAlign: "left" }}
+    >
+      <span style={{ fontSize: "15px" }}>logout</span>
     </Button>
   );
 };

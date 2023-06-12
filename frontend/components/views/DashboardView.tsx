@@ -1,35 +1,40 @@
-import BaseView from "./BaseView";
+import BaseDashboardView from "./BaseDashboardView";
 
 import { AuthView } from "./AuthView";
-import { Header } from "../templates/Header";
+import { CommonHeader } from "../templates/Header";
 
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { CommonSidebar } from "../templates/Sidebar";
+import { Layout, Menu, Avatar, Divider, MenuProps } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import Link from "next/link";
+import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 
-export default function DashBoardView(props) {
-  const [loginUserId] = useAtom(loginUserIdAtom);
+const { Header, Sider, Content } = Layout;
 
-  const { finalToken: token, error: accessTokenError } = useAccessToken();
+export default function DashBoardView(props: any) {
+  // const [loginUserId] = useAtom(loginUserIdAtom);
 
-  const { userDetail, error } = useGetUserDetail({
-    auth0_id: loginUserId,
-    token: token,
-  });
+  // const { finalToken: token, error: accessTokenError } = useAccessToken();
 
-  console.log("userDetail: ", userDetail);
+  // const { userDetail, error } = useGetUserDetail({
+  //   auth0_id: loginUserId,
+  //   token: token,
+  // });
 
-  console.log("subscription: ", props);
+  // console.log("userDetail: ", userDetail);
+  // console.log("subscription: ", props);
 
   return (
     <AuthView>
-      <BaseView title="index">
-        <Header />
-        <div>dashboard</div>
-      </BaseView>
+      <BaseDashboardView title="index">
+        <div>Content Here</div>
+      </BaseDashboardView>
     </AuthView>
   );
 }

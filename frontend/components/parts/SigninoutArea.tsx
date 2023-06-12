@@ -26,16 +26,31 @@ export const SigninoutArea = (props: Props) => {
 
   if (props.isLogin) {
     return (
-      <>
+      <div
+        style={{
+          height: "45px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          justifyItems: "end",
+        }}
+      >
         <UserIcon />
-        <SignOutIconBtn />
-      </>
+      </div>
     );
   } else {
     return (
-      <>
+      <div
+        style={{
+          height: "45px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "end",
+          justifyItems: "end",
+        }}
+      >
         <SignInBtn />
-      </>
+      </div>
     );
   }
 };

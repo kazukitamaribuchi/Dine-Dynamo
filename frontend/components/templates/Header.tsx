@@ -10,16 +10,17 @@ import { SigninoutArea } from "../parts/SigninoutArea";
 
 import styles from "../../styles/header.module.scss";
 import { CompanyLogo } from "../elements/CompanyLogo";
+import { CompanyLogoArea } from "../parts/CompanyLogoArea";
 
 interface Props {
   isLogin?: boolean;
 }
 
-export const Header = ({ isLogin = true }: Props) => {
+export const CommonHeader = ({ isLogin = true }: Props) => {
   return (
     <Row className={styles.header}>
       <Col span={19} className={styles.logo_wrap}>
-        <CompanyLogo />
+        <CompanyLogoArea />
       </Col>
       <Col span={5} className={styles.navi_wrap}>
         <SigninoutArea isLogin={isLogin} />

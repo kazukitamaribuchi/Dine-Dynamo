@@ -1,4 +1,4 @@
-import { Button } from "antd";
+import { Avatar, Button } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,14 +8,13 @@ interface Props {
 }
 
 export const CompanyLogo = ({ height = 45, width = 45 }: Props) => {
+  const url = "/images/logo2.png";
   return (
-    <Link href="/" style={{ height: height, width: width, display: "block" }}>
-      <Image
-        src="/images/logo.png"
-        height={height}
-        width={width}
-        alt="IRS Logo"
-      />
-    </Link>
+    <Avatar
+      src={
+        <img src={url} alt="logo" style={{ height: height, width: width }} />
+      }
+      style={{ height: height, width: width, display: "block" }}
+    />
   );
 };
