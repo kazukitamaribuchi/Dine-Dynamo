@@ -18,17 +18,17 @@ import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
 const { Header, Sider, Content } = Layout;
 
 export default function DashBoardView(props: any) {
-  // const [loginUserId] = useAtom(loginUserIdAtom);
+  const [loginUserId] = useAtom(loginUserIdAtom);
 
-  // const { finalToken: token, error: accessTokenError } = useAccessToken();
+  const { finalToken: token, error: accessTokenError } = useAccessToken();
 
-  // const { userDetail, error } = useGetUserDetail({
-  //   auth0_id: loginUserId,
-  //   token: token,
-  // });
+  const { userDetail, error } = useGetUserDetail({
+    auth0_id: loginUserId,
+    token: token,
+  });
 
-  // console.log("userDetail: ", userDetail);
-  // console.log("subscription: ", props);
+  console.log("userDetail: ", userDetail);
+  console.log("subscription: ", props);
 
   return (
     <AuthView>

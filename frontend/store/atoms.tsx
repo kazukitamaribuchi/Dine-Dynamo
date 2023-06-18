@@ -28,7 +28,7 @@ export const loginUserRefreshTokenAtom =
 export const loginUserAccessTokenExpAtom =
   atomWithStorage<LoginUserAccessTokenExpAtom>("loginUserAccessTokenExp", null);
 
-export const loginUserAtom = atom<LoginUserAtom>(null);
+export const loginUserAtom = atomWithStorage<LoginUserAtom>("loginUser", null);
 
 export const loginUserAuth0AccessTokenAtom =
   atom<LoginUserAuth0AccessTokenAtom>(null);

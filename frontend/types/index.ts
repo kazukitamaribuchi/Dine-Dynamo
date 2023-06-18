@@ -2,6 +2,7 @@ type User = {
   auth0_id: string;
   auth0_name: string;
   username: string;
+  email: string;
 };
 
 // データ読み込み中

@@ -1,9 +1,9 @@
 const fontSizeMap = {
-  5: "20px",
-  4: "17px",
-  3: "14px",
-  2: "11px",
-  1: "9px",
+  1: "20px",
+  2: "16px",
+  3: "12px",
+  4: "8px",
+  5: "5px",
 };
 
 interface Props {

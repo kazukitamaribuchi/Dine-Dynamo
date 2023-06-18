@@ -5,6 +5,7 @@ import { SignOutIconBtn } from "../elements/SignOutIconBtn";
 import { useState } from "react";
 
 import { LoadingSpin } from "../elements/LoadingSpin";
+import { PopoverUserIcon } from "../elements/PopoverUserIcon";
 
 interface Props {
   isLogin: boolean;
@@ -35,7 +36,7 @@ export const SigninoutArea = (props: Props) => {
           justifyItems: "end",
         }}
       >
-        <UserIcon />
+        <PopoverUserIcon />
       </div>
     );
   } else {

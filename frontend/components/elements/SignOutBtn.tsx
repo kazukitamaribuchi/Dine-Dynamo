@@ -49,7 +49,12 @@ export const SignOutBtn = () => {
       type="text"
       icon={<LogoutOutlined />}
       onClick={showConfirm}
-      style={{ height: "40px", width: "100%", textAlign: "left" }}
+      style={{
+        padding: "0 0 0 10px",
+        height: "32px",
+        width: "100%",
+        textAlign: "left",
+      }}
     >
       <span style={{ fontSize: "15px" }}>logout</span>
     </Button>
