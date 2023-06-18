@@ -1,4 +1,4 @@
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import React, { useState } from "react";
 import {
   AiOutlineDoubleLeft,
@@ -16,6 +16,7 @@ import {
   HeartOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
+import Link from "next/link";
 
 export const CommonSidebar = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -32,28 +33,28 @@ export const CommonSidebar = () => {
       <div className="logo" />
       <Menu theme="light" defaultSelectedKeys={["1"]} mode="inline">
         <Menu.Item key="1" icon={<HomeOutlined />}>
-          home
+          <Link href="/dashboard">home</Link>
         </Menu.Item>
         <Menu.Item key="2" icon={<InstagramOutlined />}>
-          instagram
+          <Link href="/instagram">instagram</Link>
         </Menu.Item>
         <Menu.Item key="3" icon={<FacebookFilled />}>
-          facebook
+          <Link href="/facebook">facebook</Link>
         </Menu.Item>
         <Menu.Item key="4" icon={<TwitterOutlined />}>
-          twitter
+          <Link href="/twitter">twitter</Link>
         </Menu.Item>
         <Menu.Item key="5" icon={<CommentOutlined />}>
-          comment
+          <Link href="/comment">comment</Link>
         </Menu.Item>
         <Menu.Item key="6" icon={<HeartOutlined />}>
-          like
+          <Link href="/like">like</Link>
         </Menu.Item>
         <Menu.Item key="7" icon={<ShopOutlined />}>
-          competitor
+          <Link href="/competitor">competitor</Link>
         </Menu.Item>
         <Menu.Item key="8" icon={<AiOutlineSetting />}>
-          settings
+          <Link href="/settings">settings</Link>
         </Menu.Item>
       </Menu>
       <div
@@ -62,6 +63,7 @@ export const CommonSidebar = () => {
           bottom: "0px",
           width: "100%",
           padding: "25px 0",
+          cursor: "pointer",
         }}
         onClick={onCollapse}
       >

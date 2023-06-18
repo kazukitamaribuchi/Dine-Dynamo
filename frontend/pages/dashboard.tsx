@@ -8,7 +8,7 @@ const Index: NextPage = (props) => {
 
 export default Index;
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps() {
   // TODO URLを動的に
   try {
     const response = await axios.get("http://localhost:8000/api/subscription");
