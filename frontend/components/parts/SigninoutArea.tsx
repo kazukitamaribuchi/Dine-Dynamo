@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { LoadingSpin } from "../elements/LoadingSpin";
 import { PopoverUserIcon } from "../elements/PopoverUserIcon";
+import { PopoverNotificationIcon } from "../elements/PopoverNotificationIcon";
 
 interface Props {
   isLogin: boolean;
@@ -34,8 +35,10 @@ export const SigninoutArea = (props: Props) => {
           alignItems: "center",
           justifyContent: "end",
           justifyItems: "end",
+          gap: "20px",
         }}
       >
+        <PopoverNotificationIcon />
         <PopoverUserIcon />
       </div>
     );

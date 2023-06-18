@@ -19,22 +19,16 @@ export const PopoverUserIcon = (props: Props) => {
 
   return (
     <Popover placement="bottomLeft" content={content} trigger="click">
-      <Avatar
-        style={{
-          backgroundColor: "#00a2ae",
-          verticalAlign: "middle",
-          cursor: "pointer",
-        }}
-        size="default"
-        gap={1}
-      >
-        {loginUser && <>{loginUser.username[0]}</>}
+      <Button shape="circle" style={{ backgroundColor: "#00a2ae" }}>
+        {loginUser && (
+          <div style={{ color: "#fff" }}>{loginUser.username[0]}</div>
+        )}
         {!loginUser && (
           <>
             <AiOutlineUser />
           </>
         )}
-      </Avatar>
+      </Button>
     </Popover>
   );
 };
