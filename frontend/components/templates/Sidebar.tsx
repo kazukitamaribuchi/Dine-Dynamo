@@ -17,13 +17,19 @@ import {
   ShopOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 export const CommonSidebar = () => {
+  const router = useRouter();
+
   const [collapsed, setCollapsed] = useState(true);
   const onCollapse = () => {
     const newCollapsed = !collapsed;
     setCollapsed(newCollapsed);
   };
+
+  const selectedKey = router.pathname.slice(1);
+  console.log("selectedKey: ", selectedKey);
 
   return (
     <Sider
@@ -31,29 +37,34 @@ export const CommonSidebar = () => {
       style={{ background: "#fff" }} // Set the background color of Sider to white
     >
       <div className="logo" />
-      <Menu theme="light" defaultSelectedKeys={["1"]} mode="inline">
-        <Menu.Item key="1" icon={<HomeOutlined />}>
+      <Menu
+        theme="light"
+        selectedKeys={[selectedKey]}
+        defaultSelectedKeys={["dashboard"]}
+        mode="inline"
+      >
+        <Menu.Item key="dashboard" icon={<HomeOutlined />}>
           <Link href="/dashboard">home</Link>
         </Menu.Item>
-        <Menu.Item key="2" icon={<InstagramOutlined />}>
+        <Menu.Item key="instagram" icon={<InstagramOutlined />}>
           <Link href="/instagram">instagram</Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<FacebookFilled />}>
+        <Menu.Item key="facebook" icon={<FacebookFilled />}>
           <Link href="/facebook">facebook</Link>
         </Menu.Item>
-        <Menu.Item key="4" icon={<TwitterOutlined />}>
+        <Menu.Item key="twitter" icon={<TwitterOutlined />}>
           <Link href="/twitter">twitter</Link>
         </Menu.Item>
-        <Menu.Item key="5" icon={<CommentOutlined />}>
+        <Menu.Item key="comment" icon={<CommentOutlined />}>
           <Link href="/comment">comment</Link>
         </Menu.Item>
-        <Menu.Item key="6" icon={<HeartOutlined />}>
+        <Menu.Item key="like" icon={<HeartOutlined />}>
           <Link href="/like">like</Link>
         </Menu.Item>
-        <Menu.Item key="7" icon={<ShopOutlined />}>
+        <Menu.Item key="competitor" icon={<ShopOutlined />}>
           <Link href="/competitor">competitor</Link>
         </Menu.Item>
-        <Menu.Item key="8" icon={<AiOutlineSetting />}>
+        <Menu.Item key="settings" icon={<AiOutlineSetting />}>
           <Link href="/settings">settings</Link>
         </Menu.Item>
       </Menu>
