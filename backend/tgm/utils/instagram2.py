@@ -6,7 +6,6 @@ access_token = "EAACDWqv1OZCkBAIJvge4ZCysb1v9VczYTGJtS1D2IOmlYqkvcrb9nyZBqx7CBSi
 # TODO ユーザー毎のIDを動的に取得 DB必要
 instagram_business_account_id = "17841459125073071"
 
-
 INSTAGRAM_API_BASE_URL = "https://graph.facebook.com/v17.0"
 
 
@@ -38,7 +37,7 @@ def get_users_other_info():
 def get_id_info():
     url = f"{INSTAGRAM_API_BASE_URL}/ig_hashtag_search?user_id={instagram_business_account_id}&q=coke&access_token={access_token}"
     response = requests.get(url).json()
-    return response["data"][0]
+    return response["data"][0]["id"]
 
 
 def get_cocacola_info():
@@ -50,8 +49,9 @@ def get_cocacola_info():
 
 def get_recent_media_info():
     # ハッシュタグIDをキーにして、最新投稿順またはこう評価順に検索をかける
+    HASHTAG_ID = get_id_info()
     url = (
-        f"{INSTAGRAM_API_BASE_URL}/17841593698074073/recent_media"
+        f"{INSTAGRAM_API_BASE_URL}/{HASHTAG_ID}/recent_media"
         + "?user_id={instagram_business_account_id}&fields=id,media_type,media_url,permalink&"
         + "access_token={access_token}"
     )
