@@ -22,7 +22,7 @@ def get_users_media_info():
     return response
 
 
-def get_users_album_info():
+def get_users_other_info():
     # TODO認証エラー
     url = f"{INSTAGRAM_API_BASE_URL}/{instagram_business_account_id}/albums"
 
@@ -47,7 +47,7 @@ print("result1 :")
 print(result1)
 
 print("======================")
-result2 = get_cocacola_info()
+result2 = get_users_other_info()
 print("result2:")
 print(result2)
 
