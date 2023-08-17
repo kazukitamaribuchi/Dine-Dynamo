@@ -7,6 +7,12 @@ import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
 import { useState } from "react";
 import { Tabs } from "antd";
 import BaseDashboardView from "./BaseDashboardView";
+import { InstagramMediaList } from "../templates/instagram/InstagramMediaList";
+import { InstagramAction } from "../templates/instagram/InstagramAction";
+import { InstagramReach } from "../templates/instagram/InstagramReach";
+import { InstagramFollower } from "../templates/instagram/InstagramFollower";
+import { InstagramStory } from "../templates/instagram/InstagramStory";
+import { InstagramSummary } from "../templates/instagram/InstagramSummary";
 
 export default function InstagramView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -15,44 +21,64 @@ export default function InstagramView(props: any) {
 
   const { userDetail, error } = useGetUserDetail({
     auth0_id: loginUserId,
-    token: token,
+    token: token
   });
-
-  // TODO ページ遷移時に全てのタブのデータ取得
-
-  // TODO childrenのコンポーネント化
 
   const [items, setItems] = useState([
     {
       key: "1",
       label: `サマリー`,
-      children: "Content of Tab Pane 1",
+      children: (
+        <>
+          <InstagramSummary />
+        </>
+      )
     },
     {
       key: "2",
       label: `投稿`,
-      children: "Content of Tab Pane 2",
+      children: (
+        <>
+          <InstagramMediaList />
+        </>
+      )
     },
     {
       key: "3",
       label: `ストーリーズ`,
-      children: "Content of Tab Pane 3",
+      children: (
+        <>
+          <InstagramStory />
+        </>
+      )
     },
     {
       key: "4",
       label: `フォロワー`,
-      children: "Content of Tab Pane 4",
+      children: (
+        <>
+          <InstagramFollower />
+        </>
+      )
     },
     {
       key: "5",
       label: `アクション`,
-      children: "Content of Tab Pane 5",
+      children: (
+        <>
+          <InstagramAction />
+        </>
+      )
     },
     {
       key: "6",
       label: `リーチ`,
-      children: "Content of Tab Pane 6",
-    },
+      children: (
+        <>
+          <InstagramReach />
+        </>
+      )
+    }
   ]);
 
   const changeTabs = (key: string) => {
