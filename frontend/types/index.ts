@@ -27,3 +27,37 @@ export type LoginUserAtom = User | null;
 
 // auth0のアクセストークン
 export type LoginUserAuth0AccessTokenAtom = string | null;
+
+export type InstagramMedia = {
+  id: string;
+  like_count: number;
+  media_type: "CAROUSEL_ALBUM" | string; // 他に可能な文字列があれば追加
+  media_product_type: "FEED" | string; // 他に可能な文字列があれば追加
+  permalink: string;
+  timestamp: string;
+  username: string;
+  media_url: string;
+  caption: string;
+  is_comment_enabled: boolean;
+  insight: Insight;
+  thumbnail_url?: string;
+};
+
+type Insight = {
+  error?: {
+    message: string;
+    type: string;
+    code: number;
+    error_data: {
+      blame_field_specs: string[][];
+    };
+    error_subcode: number;
+    is_transient: boolean;
+    error_user_title: string;
+    error_user_msg: string;
+    fbtrace_id: string;
+  };
+  impression?: number;
+  reach?: number;
+  // insightに他のプロパティがある場合、こちらに追加
+};

@@ -26,6 +26,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Facebook, Instagram, Twitter, User
 from .serializers import UserSerializer
+from .utils.instagram import InstagramAPIHandler
 
 logger = logging.getLogger(__name__)
 
@@ -100,11 +101,15 @@ class InstagramViewSet(viewsets.ViewSet):
         return Response({"message": "Done"}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["get"])
-    def me(self, request):
-        """ユーザー情報."""
+    def media(self, request):
+        """投稿一覧."""
 
         logger.debug(request.data)
-        return Response({"message": "Done"}, status=status.HTTP_200_OK)
+
+        handler = InstagramAPIHandler()
+        response = handler.get_users_media_detail()
+
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class FacebookViewSet(viewsets.ViewSet):

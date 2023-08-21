@@ -8,20 +8,20 @@ const Index: NextPage = (props) => {
 
 export default Index;
 
-export async function getServerSideProps() {
-  // TODO URLを動的に
-  try {
-    const response = await axios.get("http://localhost:8000/api/subscription");
-    return {
-      props: {
-        products: response.data,
-      },
-    };
-  } catch (e) {
-    return {
-      props: {
-        products: [],
-      },
-    };
-  }
-}
+// export async function getServerSideProps() {
+//   // TODO URLを動的に
+//   try {
+//     const response = await axios.get("http://localhost:8000/api/subscription");
+//     return {
+//       props: {
+//         products: response.data,
+//       },
+//     };
+//   } catch (e) {
+//     return {
+//       props: {
+//         products: [],
+//       },
+//     };
+//   }
+// }

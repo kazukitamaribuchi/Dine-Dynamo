@@ -7,12 +7,11 @@ import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
 import { useState } from "react";
 import { Tabs } from "antd";
 import BaseDashboardView from "./BaseDashboardView";
-import { InstagramMediaList } from "../templates/instagram/InstagramMediaList";
-import { InstagramAction } from "../templates/instagram/InstagramAction";
-import { InstagramReach } from "../templates/instagram/InstagramReach";
-import { InstagramFollower } from "../templates/instagram/InstagramFollower";
-import { InstagramStory } from "../templates/instagram/InstagramStory";
-import { InstagramSummary } from "../templates/instagram/InstagramSummary";
+import { InstagramMediaList } from "./instagram/InstagramMediaList";
+import { InstagramAction } from "./instagram/InstagramAction";
+import { InstagramReach } from "./instagram/InstagramReach";
+import { InstagramFollower } from "./instagram/InstagramFollower";
+import { InstagramSummary } from "./instagram/InstagramSummary";
 
 export default function InstagramView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -27,7 +26,7 @@ export default function InstagramView(props: any) {
   const [items, setItems] = useState([
     {
       key: "1",
-      label: `サマリー`,
+      label: `summary`,
       children: (
         <>
           <InstagramSummary />
@@ -36,7 +35,7 @@ export default function InstagramView(props: any) {
     },
     {
       key: "2",
-      label: `投稿`,
+      label: `media`,
       children: (
         <>
           <InstagramMediaList />
@@ -45,16 +44,7 @@ export default function InstagramView(props: any) {
     },
     {
       key: "3",
-      label: `ストーリーズ`,
-      children: (
-        <>
-          <InstagramStory />
-        </>
-      )
-    },
-    {
-      key: "4",
-      label: `フォロワー`,
+      label: `follower`,
       children: (
         <>
           <InstagramFollower />
@@ -62,8 +52,8 @@ export default function InstagramView(props: any) {
       )
     },
     {
-      key: "5",
-      label: `アクション`,
+      key: "4",
+      label: `action`,
       children: (
         <>
           <InstagramAction />
@@ -71,8 +61,8 @@ export default function InstagramView(props: any) {
       )
     },
     {
-      key: "6",
-      label: `リーチ`,
+      key: "5",
+      label: `reach`,
       children: (
         <>
           <InstagramReach />
