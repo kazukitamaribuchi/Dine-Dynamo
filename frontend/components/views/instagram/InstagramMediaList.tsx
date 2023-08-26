@@ -1,5 +1,5 @@
 import { Skeleton, Table } from "antd";
-import type { ColumnsType } from "antd/es/table";
+import type { ColumnsType, TableProps } from "antd/es/table";
 import { ReactNode } from "react";
 import { formatDateToJST } from "../../../utils/functions";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
@@ -35,7 +35,13 @@ export const InstagramMediaList = () => {
       title: "date",
       dataIndex: "date",
       key: "date",
-      render: (text) => <>{text}</>
+      render: (text) => <>{text}</>,
+      sorter: (a, b) => {
+        const dateA = new Date(a.date).getTime();
+        const dateB = new Date(b.date).getTime();
+        return dateA - dateB;
+      },
+      defaultSortOrder: "ascend"
     },
     {
       title: "author",
@@ -60,17 +66,20 @@ export const InstagramMediaList = () => {
     {
       title: "like",
       dataIndex: "like",
-      key: "like"
+      key: "like",
+      sorter: (a, b) => a.like - b.like
     },
     {
       title: "impr",
       dataIndex: "impr",
-      key: "impr"
+      key: "impr",
+      sorter: (a, b) => a.impr - b.impr
     },
     {
       title: "reach",
       dataIndex: "reach",
-      key: "reach"
+      key: "reach",
+      sorter: (a, b) => a.reach - b.reach
     }
   ];
 
