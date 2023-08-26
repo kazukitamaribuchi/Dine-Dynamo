@@ -111,6 +111,19 @@ class InstagramViewSet(viewsets.ViewSet):
 
         return Response(response, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["get"])
+    def story(self, request):
+        """ストーリー一覧."""
+
+        logger.debug(request.data)
+
+        handler = InstagramAPIHandler()
+        response = handler.get_users_story_detail()
+
+        print(response)
+
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class FacebookViewSet(viewsets.ViewSet):
     """Facebook Viewset."""

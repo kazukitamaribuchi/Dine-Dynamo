@@ -37,6 +37,10 @@ class APIEndPoint:
     def MEDIA(self):
         return f"{INSTAGRAM_API_BASE_URL}/{self.business_account_id}/media"
 
+    @property
+    def STORY(self):
+        return f"{INSTAGRAM_API_BASE_URL}/{self.business_account_id}/stories"
+
     def MEDIA_DETAIL(self, media_id):
         return f"{INSTAGRAM_API_BASE_URL}/{media_id}"
 
@@ -128,6 +132,17 @@ class InstagramAPIHandler:
 
         return result
 
+    def get_users_story_list(self) -> list:
+        """ユーザーのストーリー一覧を取得する."""
+
+        print("ユーザーのストーリーID一覧を取得します。")
+        result = []
+        response = requests.get(url=self.APIPath.STORY, headers=self.headers).json()
+        result += response["data"]
+
+        print(result)
+        return result
+
     def get_users_media_detail(self) -> list:
         """ユーザーのメディア詳細一覧を取得する."""
 
@@ -154,7 +169,7 @@ class InstagramAPIHandler:
         ]
 
         for media in users_media_list:
-            print("詳細取得")
+            print("メディア詳細取得")
             params = {"fields": ",".join(fields)}
             response = requests.get(
                 url=self.APIPath.MEDIA_DETAIL(media["id"]),
@@ -162,12 +177,54 @@ class InstagramAPIHandler:
                 params=params,
             ).json()
 
-            print("詳細取得終了")
+            print("メディア詳細取得終了")
 
             # メディアタイプによって分岐してinsights取得
             # print("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★")
             response["insight"] = self.get_users_media_insights(
                 media["id"], response["media_type"], response["media_product_type"]
+            )
+            result.append(response)
+
+        print("★★★★★★★★★★★最終結果★★★★★★★★★★★")
+        print(result)
+
+        return result
+
+    def get_users_story_detail(self) -> list:
+        """ユーザーのストーリー詳細一覧を取得する."""
+
+        result = []
+        users_story_list = self.get_users_story_list()
+
+        fields = [
+            "id",
+            "caption",
+            "media_type",
+            "media_url",
+            "comments_count",
+            "like_count",
+            "permalink",
+            "thumbnail_url",
+            "timestamp",
+            "username",
+            "media_product_type",
+        ]
+
+        for story in users_story_list:
+            print("ストーリー詳細取得")
+            params = {"fields": ",".join(fields)}
+            response = requests.get(
+                url=self.APIPath.MEDIA_DETAIL(story["id"]),
+                headers=self.headers,
+                params=params,
+            ).json()
+
+            print(response)
+            print("ストーリー詳細取得終了")
+
+            response["insight"] = self.get_users_media_insights(
+                story["id"], response["media_type"], response["media_product_type"]
             )
             result.append(response)
 
