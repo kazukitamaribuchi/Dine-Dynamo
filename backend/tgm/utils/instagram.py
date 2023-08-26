@@ -255,7 +255,3 @@ class InstagramAPIHandler:
     #     }
     #     response = requests.get(url, headers=self.headers, params=params).json()
     #     return response
-
-
-handler = InstagramAPIHandler()
-user_info = handler.get_users_media_detail()
