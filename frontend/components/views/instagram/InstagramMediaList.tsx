@@ -6,6 +6,7 @@ import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useInstagramMediaList } from "@/hooks/api/useInstagramMediaList";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
+import { data } from "autoprefixer";
 
 interface DataType {
   key: string;
@@ -14,11 +15,11 @@ interface DataType {
   media: ReactNode;
   caption: string;
   like: number;
+  engage: number;
   impr: number;
   reach: number;
+  saved: number;
 }
-
-let data: DataType[] = [];
 
 export const InstagramMediaList = () => {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -30,6 +31,8 @@ export const InstagramMediaList = () => {
     lodingInstagramMediaList
   } = useInstagramMediaList({ auth0_id: loginUserId, token: token });
 
+  let data: DataType[] = [];
+
   const columns: ColumnsType<DataType> = [
     {
       title: "date",
@@ -39,7 +42,7 @@ export const InstagramMediaList = () => {
       sorter: (a, b) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
-        return dateA - dateB;
+        return dateB - dateA;
       },
       defaultSortOrder: "ascend"
     },
@@ -70,6 +73,12 @@ export const InstagramMediaList = () => {
       sorter: (a, b) => a.like - b.like
     },
     {
+      title: "engage",
+      dataIndex: "engage",
+      key: "engage",
+      sorter: (a, b) => a.engage - b.engage
+    },
+    {
       title: "impr",
       dataIndex: "impr",
       key: "impr",
@@ -80,6 +89,12 @@ export const InstagramMediaList = () => {
       dataIndex: "reach",
       key: "reach",
       sorter: (a, b) => a.reach - b.reach
+    },
+    {
+      title: "saved",
+      dataIndex: "saved",
+      key: "saved",
+      sorter: (a, b) => a.saved - b.saved
     }
   ];
 
@@ -88,14 +103,22 @@ export const InstagramMediaList = () => {
 
   if (!lodingInstagramMediaList && instagramMediaList) {
     for (const response of instagramMediaList) {
-      let impression = 0;
-      let reach = 0;
-      if (response.insight.impression) {
-        impression = response.insight.impression;
+      let insight_dict: { [key: string]: number } = {};
+      if ("error" in response.insight) {
+        insight_dict.engagement = 0;
+        insight_dict.impressions = 0;
+        insight_dict.reach = 0;
+        insight_dict.saved = 0;
+      } else {
+        const insights = response.insight.insights.data;
+
+        for (const insight of insights) {
+          if (insight.values && insight.values[0]) {
+            insight_dict[insight.name] = insight.values[0].value;
+          }
+        }
       }
-      if (response.insight.reach) {
-        reach = response.insight.reach;
-      }
+
       let media = response.media_url;
       if (response.thumbnail_url) {
         media = response.thumbnail_url;
@@ -107,8 +130,10 @@ export const InstagramMediaList = () => {
         media: media,
         caption: response.caption,
         like: response.like_count,
-        impr: impression,
-        reach: reach
+        engage: insight_dict.engagement,
+        impr: insight_dict.impressions,
+        reach: insight_dict.reach,
+        saved: insight_dict.saved
       });
     }
   }

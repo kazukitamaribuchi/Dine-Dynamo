@@ -12,6 +12,7 @@ import { InstagramAction } from "./instagram/InstagramAction";
 import { InstagramReach } from "./instagram/InstagramReach";
 import { InstagramFollower } from "./instagram/InstagramFollower";
 import { InstagramSummary } from "./instagram/InstagramSummary";
+import { InstagramStoryList } from "./instagram/InstagramStoryList";
 
 export default function InstagramView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -44,6 +45,15 @@ export default function InstagramView(props: any) {
     },
     {
       key: "3",
+      label: `story`,
+      children: (
+        <>
+          <InstagramStoryList />
+        </>
+      )
+    },
+    {
+      key: "4",
       label: `follower`,
       children: (
         <>
@@ -52,7 +62,7 @@ export default function InstagramView(props: any) {
       )
     },
     {
-      key: "4",
+      key: "5",
       label: `action`,
       children: (
         <>
@@ -61,7 +71,7 @@ export default function InstagramView(props: any) {
       )
     },
     {
-      key: "5",
+      key: "6",
       label: `reach`,
       children: (
         <>
