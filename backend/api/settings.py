@@ -5,6 +5,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import environ
+from corsheaders.defaults import default_headers
 
 # TODO envの扱い方
 # env = environ.Env()
@@ -109,7 +110,7 @@ SIMPLE_JWT = {
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -133,7 +134,8 @@ JWT_AUTH = {
     "JWT_VERIFY": True,
     "JWT_VERIFY_EXPIRATION": True,
     "JWT_LEEWAY": 0,
-    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=86400),  # Sessionの保存期間を設定(24時間)
+    # Sessionの保存期間を設定(24時間)
+    "JWT_EXPIRATION_DELTA": datetime.timedelta(seconds=86400),
     # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=604800), # Sessionの保存期間を設定(1週間)
     "JWT_ALLOW_REFRESH": True,
     "JWT_REFRESH_EXPIRATION_DELTA": datetime.timedelta(days=1),
@@ -233,7 +235,6 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-from corsheaders.defaults import default_headers
 
 CORS_ALLOW_HEADERS = default_headers + ("access-control-allow-origin",)
 
