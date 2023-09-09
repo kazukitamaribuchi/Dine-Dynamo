@@ -107,7 +107,21 @@ class InstagramViewSet(viewsets.ViewSet):
         logger.debug(request.data)
 
         handler = InstagramAPIHandler()
-        response = handler.get_users_media_detail()
+        response = handler.get_users_media_detail(insight=False)
+
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["get"])
+    def media_insight(self, request):
+        """投稿一覧とインサイト一覧.
+
+        mediaid一覧が渡された場合、そのmediaidのインサイトを返す
+        """
+
+        logger.debug(request.data)
+
+        handler = InstagramAPIHandler()
+        response = handler.get_users_media_detail(insight=True)
 
         return Response(response, status=status.HTTP_200_OK)
 

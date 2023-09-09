@@ -36,7 +36,7 @@ export default function BaseDashboardView({
               // background: "#1e1e2b",
               background: "#fff",
               padding: 0,
-              marginBottom: "5px",
+              marginBottom: "2px"
             }}
           >
             <CommonHeader />
@@ -44,7 +44,7 @@ export default function BaseDashboardView({
           <Layout style={{ minHeight: "calc(100vh - 45px)" }}>
             <CommonSidebar />
             <Layout>
-              <Content style={{ margin: "0 16px" }}>
+              <Content style={{ margin: "0 2px" }}>
                 <div
                   style={{ padding: 24, background: "#fff", minHeight: 360 }}
                 >
@@ -64,7 +64,7 @@ export async function getStaticProps() {
   return {
     props: {
       title: configData.default.title,
-      description: configData.default.description,
-    },
+      description: configData.default.description
+    }
   };
 }

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Tabs } from "antd";
 import BaseDashboardView from "./BaseDashboardView";
 import { InstagramMediaList } from "./instagram/InstagramMediaList";
+import { InstagramMedia } from "./instagram/InstagramMedia";
 import { InstagramAction } from "./instagram/InstagramAction";
 import { InstagramReach } from "./instagram/InstagramReach";
 import { InstagramFollower } from "./instagram/InstagramFollower";
@@ -39,7 +40,7 @@ export default function InstagramView(props: any) {
       label: `media`,
       children: (
         <>
-          <InstagramMediaList />
+          <InstagramMedia />
         </>
       )
     },
@@ -60,25 +61,25 @@ export default function InstagramView(props: any) {
           <InstagramFollower />
         </>
       )
-    },
-    {
-      key: "5",
-      label: `action`,
-      children: (
-        <>
-          <InstagramAction />
-        </>
-      )
-    },
-    {
-      key: "6",
-      label: `reach`,
-      children: (
-        <>
-          <InstagramReach />
-        </>
-      )
     }
+    // {
+    //   key: "5",
+    //   label: `action`,
+    //   children: (
+    //     <>
+    //       <InstagramAction />
+    //     </>
+    //   )
+    // },
+    // {
+    //   key: "6",
+    //   label: `reach`,
+    //   children: (
+    //     <>
+    //       <InstagramReach />
+    //     </>
+    //   )
+    // }
   ]);
 
   const changeTabs = (key: string) => {

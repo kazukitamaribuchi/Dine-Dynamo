@@ -6,7 +6,8 @@ import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useInstagramMediaList } from "@/hooks/api/useInstagramMediaList";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
-import { data } from "autoprefixer";
+import { InstagramMediaGrid } from "@/components/templates/instagram/InstagramMediaGrid";
+import { InstagramMediaTable } from "@/components/templates/instagram/InstagramMediaTable";
 
 interface DataType {
   key: string;
@@ -15,13 +16,13 @@ interface DataType {
   media: ReactNode;
   caption: string;
   like: number;
-  engage: number;
-  impr: number;
-  reach: number;
-  saved: number;
 }
 
-export const InstagramMediaList = () => {
+interface Props {
+  mediaStyle: number;
+}
+
+export const InstagramMediaList = ({ mediaStyle }: Props) => {
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
@@ -33,92 +34,11 @@ export const InstagramMediaList = () => {
 
   let data: DataType[] = [];
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: "date",
-      dataIndex: "date",
-      key: "date",
-      render: (text) => <>{text}</>,
-      sorter: (a, b) => {
-        const dateA = new Date(a.date).getTime();
-        const dateB = new Date(b.date).getTime();
-        return dateB - dateA;
-      },
-      defaultSortOrder: "ascend"
-    },
-    {
-      title: "author",
-      dataIndex: "username",
-      key: "username"
-    },
-    {
-      title: "media",
-      dataIndex: "media",
-      key: "media",
-      render: (value, record) => (
-        <>
-          <img style={{ maxHeight: 60, maxWidth: 100 }} src={value} />
-        </>
-      )
-    },
-    {
-      title: "caption",
-      dataIndex: "caption",
-      key: "caption"
-    },
-    {
-      title: "like",
-      dataIndex: "like",
-      key: "like",
-      sorter: (a, b) => a.like - b.like
-    },
-    {
-      title: "engage",
-      dataIndex: "engage",
-      key: "engage",
-      sorter: (a, b) => a.engage - b.engage
-    },
-    {
-      title: "impr",
-      dataIndex: "impr",
-      key: "impr",
-      sorter: (a, b) => a.impr - b.impr
-    },
-    {
-      title: "reach",
-      dataIndex: "reach",
-      key: "reach",
-      sorter: (a, b) => a.reach - b.reach
-    },
-    {
-      title: "saved",
-      dataIndex: "saved",
-      key: "saved",
-      sorter: (a, b) => a.saved - b.saved
-    }
-  ];
-
   console.log("lodingInstagramMediaList", lodingInstagramMediaList);
   console.log("instagramMediaList", instagramMediaList);
 
   if (!lodingInstagramMediaList && instagramMediaList) {
     for (const response of instagramMediaList) {
-      let insight_dict: { [key: string]: number } = {};
-      if ("error" in response.insight) {
-        insight_dict.engagement = 0;
-        insight_dict.impressions = 0;
-        insight_dict.reach = 0;
-        insight_dict.saved = 0;
-      } else {
-        const insights = response.insight.insights.data;
-
-        for (const insight of insights) {
-          if (insight.values && insight.values[0]) {
-            insight_dict[insight.name] = insight.values[0].value;
-          }
-        }
-      }
-
       let media = response.media_url;
       if (response.thumbnail_url) {
         media = response.thumbnail_url;
@@ -129,11 +49,7 @@ export const InstagramMediaList = () => {
         username: response.username,
         media: media,
         caption: response.caption,
-        like: response.like_count,
-        engage: insight_dict.engagement,
-        impr: insight_dict.impressions,
-        reach: insight_dict.reach,
-        saved: insight_dict.saved
+        like: response.like_count
       });
     }
   }
@@ -143,12 +59,10 @@ export const InstagramMediaList = () => {
       {lodingInstagramMediaList ? (
         <Skeleton active />
       ) : (
-        <Table
-          columns={columns}
-          dataSource={data}
-          bordered
-          scroll={{ x: 1100 }}
-        />
+        <>
+          {mediaStyle === 0 && <InstagramMediaGrid data={data} />}
+          {mediaStyle === 1 && <InstagramMediaTable data={data} />}
+        </>
       )}
     </>
   );

@@ -40,7 +40,7 @@ export type InstagramMedia = {
   caption: string;
   is_comment_enabled: boolean;
   thumbnail_url?: string;
-  insight: Insight | InsightError;
+  insight?: Insight | InsightError;
 };
 
 export type InstagramStory = {

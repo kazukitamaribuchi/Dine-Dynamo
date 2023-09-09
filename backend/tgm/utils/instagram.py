@@ -143,7 +143,7 @@ class InstagramAPIHandler:
         print(result)
         return result
 
-    def get_users_media_detail(self) -> list:
+    def get_users_media_detail(self, insight=False) -> list:
         """ユーザーのメディア詳細一覧を取得する."""
 
         print("ユーザーのメディア詳細一覧を取得します。")
@@ -179,11 +179,12 @@ class InstagramAPIHandler:
 
             print("メディア詳細取得終了")
 
-            # メディアタイプによって分岐してinsights取得
-            # print("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★")
-            response["insight"] = self.get_users_media_insights(
-                media["id"], response["media_type"], response["media_product_type"]
-            )
+            if insight:
+                # メディアタイプによって分岐してinsights取得
+                # print("★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★")
+                response["insight"] = self.get_users_media_insights(
+                    media["id"], response["media_type"], response["media_product_type"]
+                )
             result.append(response)
 
         print("★★★★★★★★★★★最終結果★★★★★★★★★★★")
