@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import {
   AiOutlineDoubleLeft,
   AiOutlineDoubleRight,
-  AiOutlineSetting,
+  AiOutlineSetting
 } from "react-icons/ai";
 const { Header, Content, Footer, Sider } = Layout;
 import {
@@ -14,7 +14,7 @@ import {
   TwitterOutlined,
   CommentOutlined,
   HeartOutlined,
-  ShopOutlined,
+  ShopOutlined
 } from "@ant-design/icons";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -31,9 +31,13 @@ export const CommonSidebar = () => {
   const selectedKey = router.pathname.slice(1);
   console.log("selectedKey: ", selectedKey);
 
+  const fontSize = "14px";
+
   return (
     <Sider
       collapsed={collapsed}
+      collapsedWidth={50}
+      width={160}
       style={{ background: "#fff" }} // Set the background color of Sider to white
     >
       <div className="logo" />
@@ -43,13 +47,19 @@ export const CommonSidebar = () => {
         defaultSelectedKeys={["dashboard"]}
         mode="inline"
       >
-        <Menu.Item key="dashboard" icon={<HomeOutlined />}>
+        <Menu.Item
+          key="dashboard"
+          icon={<HomeOutlined style={{ fontSize: fontSize }} />}
+        >
           <Link href="/dashboard">home</Link>
         </Menu.Item>
-        <Menu.Item key="instagram" icon={<InstagramOutlined />}>
+        <Menu.Item
+          key="instagram"
+          icon={<InstagramOutlined style={{ fontSize: fontSize }} />}
+        >
           <Link href="/instagram">instagram</Link>
         </Menu.Item>
-        <Menu.Item key="facebook" icon={<FacebookFilled />}>
+        {/* <Menu.Item key="facebook" icon={<FacebookFilled />}>
           <Link href="/facebook">facebook</Link>
         </Menu.Item>
         <Menu.Item key="twitter" icon={<TwitterOutlined />}>
@@ -63,8 +73,11 @@ export const CommonSidebar = () => {
         </Menu.Item>
         <Menu.Item key="competitor" icon={<ShopOutlined />}>
           <Link href="/competitor">competitor</Link>
-        </Menu.Item>
-        <Menu.Item key="settings" icon={<AiOutlineSetting />}>
+        </Menu.Item> */}
+        <Menu.Item
+          key="settings"
+          icon={<AiOutlineSetting style={{ fontSize: fontSize }} />}
+        >
           <Link href="/settings">settings</Link>
         </Menu.Item>
       </Menu>
@@ -74,7 +87,7 @@ export const CommonSidebar = () => {
           bottom: "0px",
           width: "100%",
           padding: "25px 0",
-          cursor: "pointer",
+          cursor: "pointer"
         }}
         onClick={onCollapse}
       >
