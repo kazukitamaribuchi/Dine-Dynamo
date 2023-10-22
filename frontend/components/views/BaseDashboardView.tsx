@@ -46,7 +46,11 @@ export default function BaseDashboardView({
             <Layout>
               <Content style={{ margin: "0 2px" }}>
                 <div
-                  style={{ padding: 24, background: "#fff", minHeight: 360 }}
+                  style={{
+                    padding: "8px 25px",
+                    background: "#fff",
+                    minHeight: "calc(100vh - 45px)"
+                  }}
                 >
                   {children}
                 </div>

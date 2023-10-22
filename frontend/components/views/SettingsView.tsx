@@ -6,6 +6,9 @@ import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
+import { Typography } from "antd";
+
+const { Title, Paragraph, Text, Link } = Typography;
 
 export default function SettingsView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -14,7 +17,7 @@ export default function SettingsView(props: any) {
 
   const { userDetail, error } = useGetUserDetail({
     auth0_id: loginUserId,
-    token: token,
+    token: token
   });
 
   console.log("userDetail: ", userDetail);
@@ -23,7 +26,7 @@ export default function SettingsView(props: any) {
   return (
     <AuthView>
       <BaseDashboardView title="index">
-        <div>Settings</div>
+        <Title level={2}>settings</Title>
       </BaseDashboardView>
     </AuthView>
   );

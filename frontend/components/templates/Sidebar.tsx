@@ -14,6 +14,7 @@ import {
   TwitterOutlined,
   CommentOutlined,
   HeartOutlined,
+  ShopTwoTone,
   ShopOutlined
 } from "@ant-design/icons";
 import Link from "next/link";
@@ -58,6 +59,17 @@ export const CommonSidebar = () => {
           icon={<InstagramOutlined style={{ fontSize: fontSize }} />}
         >
           <Link href="/instagram">instagram</Link>
+        </Menu.Item>
+        <Menu.Item
+          key="tenant"
+          icon={
+            <ShopTwoTone
+              twoToneColor="#DC143C"
+              style={{ fontSize: fontSize }}
+            />
+          }
+        >
+          <Link href="/tenant">tenant</Link>
         </Menu.Item>
         {/* <Menu.Item key="facebook" icon={<FacebookFilled />}>
           <Link href="/facebook">facebook</Link>

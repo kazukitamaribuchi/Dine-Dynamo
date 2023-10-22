@@ -5,7 +5,7 @@ import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
 import { useState } from "react";
-import { Tabs } from "antd";
+import { Tabs, Typography } from "antd";
 import BaseDashboardView from "./BaseDashboardView";
 import { InstagramMediaList } from "./instagram/InstagramMediaList";
 import { InstagramMedia } from "./instagram/InstagramMedia";
@@ -14,6 +14,8 @@ import { InstagramReach } from "./instagram/InstagramReach";
 import { InstagramFollower } from "./instagram/InstagramFollower";
 import { InstagramSummary } from "./instagram/InstagramSummary";
 import { InstagramStoryList } from "./instagram/InstagramStoryList";
+
+const { Title, Paragraph, Text, Link } = Typography;
 
 export default function InstagramView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -92,6 +94,7 @@ export default function InstagramView(props: any) {
   return (
     <AuthView>
       <BaseDashboardView title="index">
+        {/* <Title level={2}>instaram</Title> */}
         <Tabs items={items} onChange={changeTabs}></Tabs>
       </BaseDashboardView>
     </AuthView>

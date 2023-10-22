@@ -38,6 +38,7 @@ export type InstagramMedia = {
   username: string;
   media_url: string;
   caption: string;
+  comments_count: number;
   is_comment_enabled: boolean;
   thumbnail_url?: string;
   insight?: Insight | InsightError;

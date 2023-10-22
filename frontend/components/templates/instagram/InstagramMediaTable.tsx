@@ -5,10 +5,10 @@ import { ReactNode } from "react";
 interface DataType {
   key: string;
   date: string;
-  username: string;
   media: ReactNode;
   caption: string;
   like: number;
+  comment: number;
 }
 
 interface Props {
@@ -21,18 +21,13 @@ export const InstagramMediaTable = ({ data }: Props) => {
       title: "date",
       dataIndex: "date",
       key: "date",
-      render: (text) => <>{text}</>,
+      render: (text) => <div style={{ whiteSpace: "nowrap" }}>{text}</div>,
       sorter: (a, b) => {
         const dateA = new Date(a.date).getTime();
         const dateB = new Date(b.date).getTime();
         return dateB - dateA;
       },
       defaultSortOrder: "ascend"
-    },
-    {
-      title: "author",
-      dataIndex: "username",
-      key: "username"
     },
     {
       title: "media",
@@ -54,6 +49,12 @@ export const InstagramMediaTable = ({ data }: Props) => {
       dataIndex: "like",
       key: "like",
       sorter: (a, b) => a.like - b.like
+    },
+    {
+      title: "comment",
+      dataIndex: "comment",
+      key: "comment",
+      sorter: (a, b) => a.comment - b.comment
     }
   ];
 

@@ -1,5 +1,6 @@
 import { ShopOutlined, ShopTwoTone } from "@ant-design/icons";
 import { Button } from "antd";
+import Link from "next/link";
 
 export const ShopSettingBtn = () => {
   return (
@@ -10,10 +11,10 @@ export const ShopSettingBtn = () => {
         padding: "0 0 0 10px",
         height: "32px",
         width: "100%",
-        textAlign: "left",
+        textAlign: "left"
       }}
     >
-      店舗管理
+      <Link href="/tenant">店舗管理</Link>
     </Button>
   );
 };

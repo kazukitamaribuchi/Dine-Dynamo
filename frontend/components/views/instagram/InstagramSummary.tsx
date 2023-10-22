@@ -1,3 +1,3 @@
 export const InstagramSummary = () => {
-  return <>InstagramSummary</>;
+  return <>summary</>;
 };

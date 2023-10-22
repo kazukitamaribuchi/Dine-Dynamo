@@ -12,10 +12,10 @@ import { InstagramMediaTable } from "@/components/templates/instagram/InstagramM
 interface DataType {
   key: string;
   date: string;
-  username: string;
   media: ReactNode;
   caption: string;
   like: number;
+  comment: number;
 }
 
 interface Props {
@@ -43,13 +43,14 @@ export const InstagramMediaList = ({ mediaStyle }: Props) => {
       if (response.thumbnail_url) {
         media = response.thumbnail_url;
       }
+      let like_count = response.like_count ? response.like_count : 0;
       data.push({
         key: response.id,
         date: formatDateToJST(response.timestamp),
-        username: response.username,
         media: media,
         caption: response.caption,
-        like: response.like_count
+        like: like_count,
+        comment: response.comments_count
       });
     }
   }

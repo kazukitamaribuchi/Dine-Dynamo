@@ -1,5 +1,5 @@
 import { InstagramFollowerGraph } from "@/components/parts/instagram/InstagramFollowerGraph";
-import { Statistic, Row, Col, Typography, Card } from "antd";
+import { Statistic, Row, Col, Card } from "antd";
 
 import {
   TeamOutlined,
@@ -9,11 +9,18 @@ import {
 } from "@ant-design/icons";
 import { InstagramGraphTitle } from "@/components/elements/InstagramGraphTitle";
 
-const { Text, Title } = Typography;
+interface DataType {
+  name: string;
+  follower: number;
+}
 
-export const InstagramFollowerGraphArea = () => {
+interface Props {
+  data: DataType[];
+}
+
+export const InstagramFollowerGraphArea = ({ data }: Props) => {
   return (
-    <Card style={{}}>
+    <Card>
       <InstagramGraphTitle title={"フォロワー数遷移"} />
 
       <div
@@ -45,7 +52,7 @@ export const InstagramFollowerGraphArea = () => {
       </div>
 
       <div style={{ height: "210px", position: "relative", left: "-13px" }}>
-        <InstagramFollowerGraph />
+        <InstagramFollowerGraph data={data} />
       </div>
     </Card>
   );

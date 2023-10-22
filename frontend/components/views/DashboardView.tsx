@@ -10,7 +10,15 @@ import { useGetUserDetail } from "@/hooks/api/useGetUserDetail";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { CommonSidebar } from "../templates/Sidebar";
-import { Layout, Menu, Avatar, Divider, MenuProps, Tabs } from "antd";
+import {
+  Layout,
+  Menu,
+  Avatar,
+  Divider,
+  MenuProps,
+  Tabs,
+  Typography
+} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import { AiOutlineDoubleLeft, AiOutlineDoubleRight } from "react-icons/ai";
@@ -24,15 +32,19 @@ export default function DashBoardView(props: any) {
 
   const { userDetail, error } = useGetUserDetail({
     auth0_id: loginUserId,
-    token: token,
+    token: token
   });
 
   console.log("userDetail: ", userDetail);
   console.log("subscription: ", props);
 
+  const { Title, Paragraph, Text, Link } = Typography;
+
   return (
     <AuthView>
-      <BaseDashboardView title="index">dashboard</BaseDashboardView>
+      <BaseDashboardView title="index">
+        {/* <Title level={2}>dashboard</Title> */}
+      </BaseDashboardView>
     </AuthView>
   );
 }
