@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from ...models import Instagram, User
+from ...models import Instagram, Tenant, TenantSetting, User, UserSetting
 
 logger = logging.getLogger(__name__)
 
@@ -13,14 +13,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         options.setdefault("interactive", False)
 
-        auth0_id = "test"
-        auth0_name = "test"
+        auth0_id = "google-oauth2|103115413586892783733"
+        auth0_name = ""
 
-        username = "test"
-        email = "test@gmail.com"
+        username = "kk tt"
+        email = "kazuki.tamaribuchi@gmail.com"
         password = "testAa1@"
-
-        database = options.get("database")
 
         try:
             user_data = {
@@ -38,11 +36,24 @@ class Command(BaseCommand):
 
                 user = User.objects.create(**user_data)
 
+                tenant = Tenant.objects.create(user=user, name="鉄板焼 ぼんの")
+
                 Instagram.objects.create(
+                    tenant=tenant,
+                    business_account_id="17841403279193745",
+                    name="kazuki_tamaribuchi",
+                    username="kazuki tamaribuchi",
+                    access_token="EAALviXTZBIO4BO6GanNX1qcZB1AgddRZBOyG5LQPnzB2aARz5MQdpPMAJOjRwJFxH5ZA72BSZBoitJEhGlCYMFkvYA90ZA9U9OLkkxHiQX9WYon0jweLh3IQOdmbfUc50kQCZCJA3XzTp8lG9HQktaNsp33IZBratGDHkKLj44aewE1OUJNux9fOBlgDmWD1kfEZD",
+                )
+
+                UserSetting.objects.create(
                     user=user,
-                    token="EAACDWqv1OZCkBAIJvge4ZCysb1v9VczYTGJtS1D2IOmlYqkvcrb9nyZBqx7CBSirDgsZAL35C5JA5WLXlQk4Qlb2SUGxXnJkF5xLPJB6qTZBZClSK6mtAqO6N2qXAw8hPdwqezxz5PLMh8amMDnFbDR9sZBGpM7CXUUtg1ShM9kkKRqfjPeZC51R9ZBjoZBJC31WQZD",
-                    business_account_id="17841459125073071",
+                )
+
+                TenantSetting.objects.create(
+                    tenant=tenant,
                 )
 
         except Exception as e:
+            logger.error("テストデータ作成に失敗しました")
             logger.error(e)
