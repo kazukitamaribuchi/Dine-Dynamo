@@ -29,3 +29,22 @@ services:
       - "0.0.0.0:8000:8000"
     env_file:
       - .env
+
+  celery:
+    container_name: tgm-celery-container
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    tty: true
+    command: celery -A tgm worker --loglevel=info
+    volumes:
+      - ./backend:/home/api
+    depends_on:
+      - redis
+      - backend
+    env_file:
+      - .env
+
+  redis:
+    container_name: tgm-redis-container
+    image: "redis:latest"
