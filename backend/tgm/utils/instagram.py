@@ -55,9 +55,9 @@ class InstagramAPIHandler:
         """APIの初期設定をセットする."""
 
         # TODO instagram_business_account_idをDBから取得
-        business_account_id = "17841403279193745"
+        self.business_account_id = "17841403279193745"
 
-        self.APIPath = APIEndPoint(business_account_id)
+        self.APIPath = APIEndPoint(self.business_account_id)
 
         # TODO エラーハンドリング
         self.set_common_headers()
@@ -98,7 +98,7 @@ class InstagramAPIHandler:
             url=self.APIPath.BUSINESS_ACCOUNT, headers=self.headers, params=params
         ).json()
 
-        print(response)
+        # print(response)
 
         for key, value in response.items():
             setattr(self, key, value)
@@ -302,14 +302,38 @@ class InstagramAPIHandler:
 
         return response
 
-    # def get_users_media_info(self):
-    #     """Instagramのユーザーのメディア情報一覧を返す関数."""
+    def get_users_media_info(self):
+        """Instagramのユーザーのメディア情報一覧を返す関数."""
 
-    #     # TODO 上限まで取得した時の挙動確認し状況次第で対応
+        # TODO 上限まで取得した時の挙動確認し状況次第で対応
 
-    #     url = f"{INSTAGRAM_API_BASE_URL}/{self.instagram_business_account_id}"
-    #     params = {
-    #         "fields": f"business_discovery.username({self.username}){{followers_count,media_count,media{{comments_count,like_count,media_url,caption}}}}"
-    #     }
-    #     response = requests.get(url, headers=self.headers, params=params).json()
-    #     return response
+        url = f"{INSTAGRAM_API_BASE_URL}/{self.business_account_id}"
+
+        # TODO ユーザー名をどこで入れるか？
+        params = {
+            # "fields": f"business_discovery.username({self.username}){{followers_count,media_count,media{{comments_count,like_count,media_url,caption,timestamp,media_type,media_product_type,permalink}}}}"
+            "fields": f"business_discovery.username({self.username}){{media{{comments_count,like_count,media_url,caption,timestamp,media_type,media_product_type,permalink}}}}"
+        }
+        response = requests.get(url, headers=self.headers, params=params).json()
+
+        # VIDEOの場合はサムネイルを個別で取得する
+        result = response["business_discovery"]["media"]["data"]
+
+        for data in result:
+            if data["media_type"] == "VIDEO":
+                data["thumbnail_url"] = self.get_media_thumbnail_url(data["id"])
+
+        return result
+
+    def get_media_thumbnail_url(self, media_id):
+        """VIDEOのサムネイルを取得する."""
+
+        params = {"fields": "thumbnail_url"}
+
+        response = requests.get(
+            url=self.APIPath.MEDIA_DETAIL(media_id),
+            headers=self.headers,
+            params=params,
+        ).json()
+
+        return response["thumbnail_url"]

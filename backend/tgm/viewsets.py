@@ -24,8 +24,16 @@ from rest_framework_simplejwt.serializers import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Facebook, Instagram, Twitter, User
-from .serializers import UserSerializer
+from .models import (
+    Facebook,
+    Instagram,
+    Tenant,
+    TenantSetting,
+    Twitter,
+    User,
+    UserSetting,
+)
+from .serializers import TenantSerializer, UserSerializer, UserSettingSerializer
 from .utils.instagram import InstagramAPIHandler
 
 logger = logging.getLogger(__name__)
@@ -57,14 +65,16 @@ class AuthViewSet(viewsets.ViewSet):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         try:
+            logger.debug(user)
             refresh = RefreshToken.for_user(user)
             token = {
                 "refresh_token": str(refresh),
                 "access_token": str(refresh.access_token),
             }
             return Response(token, status=status.HTTP_200_OK)
-        except:
+        except Exception as e:
             logger.error("トークン生成処理でエラーが発生しました。")
+            logger.error(e)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=["post"], url_path="token/refresh")
@@ -107,7 +117,11 @@ class InstagramViewSet(viewsets.ViewSet):
         logger.debug(request.data)
 
         handler = InstagramAPIHandler()
-        response = handler.get_users_media_detail(insight=False)
+
+        # 遅いので廃止
+        # response = handler.get_users_media_detail(insight=False)
+
+        response = handler.get_users_media_info()
 
         return Response(response, status=status.HTTP_200_OK)
 
@@ -164,15 +178,24 @@ class UserViewSet(viewsets.ModelViewSet):
 
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    permission_classes = (IsAuthenticated,)
+    # permission_classes = (IsAuthenticated,)
+    permission_classes = (AllowAny,)
 
     def retrieve(self, request, *args, **kwargs):
-        logger.info("★★★★★★★★★★★★★★★★★★★★★★")
-        logger.info(self.kwargs)
-
         auth0_id = self.kwargs["pk"]
         instance = User.objects.get(auth0_id=auth0_id)
         serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(methods=["get"], detail=True)
+    def tenants(self, request, pk=None):
+        """"""
+
+        # user = User.objects.get(auth0_id="google-oauth2|103115413586892783733")
+
+        user = self.get_object()
+        tenants = user.user_tenants.all()
+        serializer = TenantSerializer(tenants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @action(methods=["post"], detail=False, permission_classes=[AllowAny])
@@ -216,6 +239,15 @@ class UserViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             logger.error("リクエストが正しい形式でないため、ユーザー登録に失敗しました。")
+            return Response(status.HTTP_400_BAD_REQUEST)
+
+        try:
+            user = User.objects.get(auth0_id=auth0_id)
+            UserSetting.objects.create(
+                user=user,
+            )
+        except Exception as e:
+            logger.error("ユーザーの設定テーブル作成に失敗しました。")
             return Response(status.HTTP_400_BAD_REQUEST)
 
         return Response(status.HTTP_200_OK)
@@ -264,3 +296,11 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(status.HTTP_400_BAD_REQUEST)
 
         return Response(status.HTTP_200_OK)
+
+
+class TenantViewSet(viewsets.ModelViewSet):
+    """Tenant Viewset."""
+
+    serializer_class = TenantSerializer
+    queryset = Tenant.objects.all()
+    permission_classes = (AllowAny,)

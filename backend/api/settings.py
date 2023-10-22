@@ -105,6 +105,7 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     # 認証トークン
     "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
+    "USER_ID_FIELD": "auth0_id",
 }
 
 
@@ -234,10 +235,18 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 CORS_ORIGIN_ALLOW_ALL = True
-
-
 CORS_ALLOW_HEADERS = default_headers + ("access-control-allow-origin",)
-
 CORS_ALLOW_CREDENTIALS = True
-
 CORS_ORIGIN_WHITELIST = ("http://localhost:8000",)
+
+# CELERY_BROKER_URL = "redis://localhost:6379/0"
+# CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+# CELERY_ACCEPT_CONTENT = ["json"]
+# CELERY_TASK_SERIALIZER = "json"
+# CELERY_RESULT_SERIALIZER = "json"
+# CELERY_TIMEZONE = "UTC"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+# Celery Configuration Options
+CELERY_TIMEZONE = "Asia/Tokyo"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
