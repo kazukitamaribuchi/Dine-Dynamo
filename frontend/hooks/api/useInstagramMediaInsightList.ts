@@ -13,13 +13,15 @@ export const useInstagramMediaInsightList = ({ auth0_id, token }: Props) => {
     []
   );
   const [instagramMediaInsightListError, setError] = useState<unknown>(null);
-  const [lodingInstagramMediaInsightList, setLodingInstagramMediaInsightList] =
-    useState(false);
+  const [
+    loadingInstagramMediaInsightList,
+    setLoadingInstagramMediaInsightList
+  ] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLodingInstagramMediaInsightList(true);
+        setLoadingInstagramMediaInsightList(true);
         const response = await AxiosClient({
           url: `${API_URL.INSTAGRAM_MEDIA_INSIGHT}/`,
           method: "GET",
@@ -28,10 +30,10 @@ export const useInstagramMediaInsightList = ({ auth0_id, token }: Props) => {
           }
         });
         setData(response.data);
-        setLodingInstagramMediaInsightList(false);
+        setLoadingInstagramMediaInsightList(false);
       } catch (err) {
         setError(err);
-        setLodingInstagramMediaInsightList(true);
+        setLoadingInstagramMediaInsightList(false);
       }
     };
 
@@ -43,6 +45,6 @@ export const useInstagramMediaInsightList = ({ auth0_id, token }: Props) => {
   return {
     instagramMediaInsightList,
     instagramMediaInsightListError,
-    lodingInstagramMediaInsightList
+    loadingInstagramMediaInsightList
   };
 };

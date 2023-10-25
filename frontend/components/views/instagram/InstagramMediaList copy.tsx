@@ -28,7 +28,7 @@ export const InstagramMediaList = () => {
   const {
     instagramMediaList,
     instagramMediaListError,
-    lodingInstagramMediaList
+    loadingInstagramMediaList
   } = useInstagramMediaList({ auth0_id: loginUserId, token: token });
 
   let data: DataType[] = [];
@@ -98,10 +98,10 @@ export const InstagramMediaList = () => {
     }
   ];
 
-  console.log("lodingInstagramMediaList", lodingInstagramMediaList);
+  console.log("loadingInstagramMediaList", loadingInstagramMediaList);
   console.log("instagramMediaList", instagramMediaList);
 
-  if (!lodingInstagramMediaList && instagramMediaList) {
+  if (!loadingInstagramMediaList && instagramMediaList) {
     for (const response of instagramMediaList) {
       let insight_dict: { [key: string]: number } = {};
       if ("error" in response.insight) {
@@ -140,7 +140,7 @@ export const InstagramMediaList = () => {
 
   return (
     <>
-      {lodingInstagramMediaList ? (
+      {loadingInstagramMediaList ? (
         <Skeleton active />
       ) : (
         <Table

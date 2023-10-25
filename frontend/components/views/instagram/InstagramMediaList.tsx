@@ -29,15 +29,15 @@ export const InstagramMediaList = ({ mediaStyle }: Props) => {
   const {
     instagramMediaList,
     instagramMediaListError,
-    lodingInstagramMediaList
+    loadingInstagramMediaList
   } = useInstagramMediaList({ auth0_id: loginUserId, token: token });
 
   let data: DataType[] = [];
 
-  console.log("lodingInstagramMediaList", lodingInstagramMediaList);
+  console.log("loadingInstagramMediaList", loadingInstagramMediaList);
   console.log("instagramMediaList", instagramMediaList);
 
-  if (!lodingInstagramMediaList && instagramMediaList) {
+  if (!loadingInstagramMediaList && instagramMediaList) {
     for (const response of instagramMediaList) {
       let media = response.media_url;
       if (response.thumbnail_url) {
@@ -57,7 +57,7 @@ export const InstagramMediaList = ({ mediaStyle }: Props) => {
 
   return (
     <>
-      {lodingInstagramMediaList ? (
+      {loadingInstagramMediaList ? (
         <Skeleton active />
       ) : (
         <>

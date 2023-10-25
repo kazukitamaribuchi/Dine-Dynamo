@@ -116,7 +116,18 @@ class TwitterSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
 class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     """テナントのシリアライザー."""
 
-    instagram = InstagramSerializer(read_only=True)
+    instagram = InstagramSerializer(
+        read_only=True,
+        fields=[
+            "id",
+            "name",
+            "username",
+            "created_at",
+            "updated_at",
+            "business_account_id",
+            "access_token",
+        ],
+    )
     facebook = FacebookSerializer(read_only=True)
     twitter = TwitterSerializer(read_only=True)
 
@@ -130,6 +141,7 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     class Meta:
         model = Tenant
         fields = [
+            "id",
             "user",
             "name",
             "instagram",

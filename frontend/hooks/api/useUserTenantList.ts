@@ -1,35 +1,34 @@
 import { AxiosClient } from "@/utils/axiosClient";
 import { useEffect, useState } from "react";
 import { API_URL } from "./urls";
-import { InstagramMedia } from "@/types";
+import { Tenant } from "@/types";
 
 type Props = {
   auth0_id: string | null;
   token: string | null;
 };
 
-export const useInstagramMediaList = ({ auth0_id, token }: Props) => {
-  const [instagramMediaList, setData] = useState<Array<InstagramMedia>>([]);
-  const [instagramMediaListError, setError] = useState<unknown>(null);
-  const [loadingInstagramMediaList, setLoadingInstagramMediaList] =
-    useState(false);
+export const useUserTenantList = ({ auth0_id, token }: Props) => {
+  const [userTenantList, setData] = useState<Array<Tenant>>([]);
+  const [userTenantListError, setError] = useState<unknown>(null);
+  const [loadingUserTenantList, setLoadingUserTenantList] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoadingInstagramMediaList(true);
+        setLoadingUserTenantList(true);
         const response = await AxiosClient({
-          url: `${API_URL.INSTAGRAM_MEDIA}/`,
+          url: `${API_URL.USER}/${auth0_id}/tenants/`,
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`
           }
         });
         setData(response.data);
-        setLoadingInstagramMediaList(false);
+        setLoadingUserTenantList(false);
       } catch (err) {
         setError(err);
-        setLoadingInstagramMediaList(true);
+        setLoadingUserTenantList(false);
       }
     };
 
@@ -39,8 +38,8 @@ export const useInstagramMediaList = ({ auth0_id, token }: Props) => {
   }, [auth0_id, token]);
 
   return {
-    instagramMediaList,
-    instagramMediaListError,
-    loadingInstagramMediaList
+    userTenantList,
+    userTenantListError,
+    loadingUserTenantList
   };
 };

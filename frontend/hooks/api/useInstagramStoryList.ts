@@ -11,13 +11,13 @@ type Props = {
 export const useInstagramStoryList = ({ auth0_id, token }: Props) => {
   const [instagramStoryList, setData] = useState<Array<InstagramStory>>([]);
   const [instagramStoryListError, setError] = useState<unknown>(null);
-  const [lodingInstagramStoryList, setLodingInstagramStoryList] =
+  const [loadingInstagramStoryList, setLoadingInstagramStoryList] =
     useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLodingInstagramStoryList(true);
+        setLoadingInstagramStoryList(true);
         const response = await AxiosClient({
           url: `${API_URL.INSTAGRAM_MEDIA}/`,
           method: "GET",
@@ -26,10 +26,10 @@ export const useInstagramStoryList = ({ auth0_id, token }: Props) => {
           }
         });
         setData(response.data);
-        setLodingInstagramStoryList(false);
+        setLoadingInstagramStoryList(false);
       } catch (err) {
         setError(err);
-        setLodingInstagramStoryList(true);
+        setLoadingInstagramStoryList(false);
       }
     };
 
@@ -41,6 +41,6 @@ export const useInstagramStoryList = ({ auth0_id, token }: Props) => {
   return {
     instagramStoryList,
     instagramStoryListError,
-    lodingInstagramStoryList
+    loadingInstagramStoryList
   };
 };

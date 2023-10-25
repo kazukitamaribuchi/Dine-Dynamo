@@ -11,7 +11,8 @@ import {
   Form,
   Input,
   Select,
-  Space
+  Space,
+  Skeleton
 } from "antd";
 import { AuthView } from "./AuthView";
 import BaseDashboardView from "./BaseDashboardView";
@@ -21,9 +22,14 @@ import { url } from "inspector";
 import { TopDescription } from "../elements/TopDescription";
 import { PlusOutlined } from "@ant-design/icons";
 import { TenantCard } from "../parts/TenantCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { loginUserIdAtom } from "@/store/atoms";
+import { useAtom } from "jotai";
+import { useAccessToken } from "@/hooks/api/useAccessToken";
+import { useUserTenantList } from "@/hooks/api/useUserTenantList";
 
 const { Title, Paragraph, Text, Link } = Typography;
+const { Option } = Select;
 
 const items = [
   {
@@ -55,6 +61,24 @@ const items = [
 ];
 
 export default function TenantView(props: any) {
+  // 新しい状態変数
+  const [loading, setLoading] = useState(true);
+
+  // 最低ローディング秒数を2秒と設定
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timer); // クリーンアップ関数
+  }, []);
+
+  const [loginUserId] = useAtom(loginUserIdAtom);
+  const { finalToken: token, error: accessTokenError } = useAccessToken();
+
+  const { userTenantList, userTenantListError, loadingUserTenantList } =
+    useUserTenantList({ auth0_id: loginUserId, token: token });
+
   const [openAddTenantDialog, setOpenAddTenantDialog] = useState(false);
 
   const showAddTenantDrawer = () => {
@@ -65,8 +89,12 @@ export default function TenantView(props: any) {
     setOpenAddTenantDialog(false);
   };
 
+  console.log("userTenantList", userTenantList);
+
   const url =
     "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg";
+
+  const displayLoading = loadingUserTenantList || loading;
 
   return (
     <AuthView>
@@ -239,9 +267,17 @@ export default function TenantView(props: any) {
             </Col>
           </Row>
           <Row gutter={16}>
-            <Col span={8}>
-              <TenantCard />
-            </Col>
+            <>
+              {displayLoading ? (
+                <Skeleton active />
+              ) : (
+                userTenantList.map((tenant, index) => (
+                  <Col key={index} span={8}>
+                    <TenantCard tenant={tenant} />
+                  </Col>
+                ))
+              )}
+            </>
           </Row>
         </div>
       </BaseDashboardView>

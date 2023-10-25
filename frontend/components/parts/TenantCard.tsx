@@ -2,6 +2,7 @@ import { Card, Row, Col, Avatar } from "antd";
 import { url } from "inspector";
 import { TitleTopDescription } from "../elements/TitleTopDescription";
 import { TopDescription } from "../elements/TopDescription";
+import { Tenant } from "@/types";
 
 import {
   EditOutlined,
@@ -9,7 +10,11 @@ import {
   SettingOutlined
 } from "@ant-design/icons";
 
-export const TenantCard = () => {
+interface Props {
+  tenant: Tenant;
+}
+
+export const TenantCard = ({ tenant }: Props) => {
   const url =
     "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg";
 
@@ -30,7 +35,7 @@ export const TenantCard = () => {
         <Col span={19}>
           <div style={{ minHeight: "60px" }}>
             <TitleTopDescription
-              title={"焼肉トラジ 横浜モアーズ店"}
+              title={tenant.name}
               description={"店舗名"}
               bold={true}
             />
@@ -42,7 +47,7 @@ export const TenantCard = () => {
             </Col>
             <Col span={10}>
               <TitleTopDescription
-                title="24日前"
+                title={tenant.last_updated_at}
                 description="最終更新日"
                 titleSize="12px"
               />

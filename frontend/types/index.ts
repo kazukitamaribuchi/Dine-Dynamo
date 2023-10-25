@@ -1,3 +1,5 @@
+import internal from "stream";
+
 type User = {
   auth0_id: string;
   auth0_name: string;
@@ -42,6 +44,36 @@ export type InstagramMedia = {
   is_comment_enabled: boolean;
   thumbnail_url?: string;
   insight?: Insight | InsightError;
+};
+
+export type Tenant = {
+  id: string;
+  user: string;
+  name: string;
+  instagram?: Instagram;
+  facebook?: Facebook;
+  twitter?: Twitter;
+  created_at: string;
+  updated_at: string;
+  last_updated_at: string;
+};
+
+export type Instagram = {
+  id: string;
+  business_account_id: string;
+  name: string;
+  username: string;
+  access_token: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Facebook = {
+  id: string;
+};
+
+export type Twitter = {
+  id: string;
 };
 
 export type InstagramStory = {

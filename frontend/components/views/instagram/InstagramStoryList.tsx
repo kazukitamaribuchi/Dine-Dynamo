@@ -131,12 +131,12 @@ export const InstagramStoryList = () => {
   // const {
   //   instagramStoryList,
   //   instagramStoryListError,
-  //   lodingInstagramStoryList
+  //   loadingInstagramStoryList
   // } = useInstagramStoryList({ auth0_id: loginUserId, token: token });
 
   let data: DataType[] = [];
 
-  const lodingInstagramStoryList = false;
+  const loadingInstagramStoryList = false;
 
   const columns: ColumnsType<DataType> = [
     {
@@ -211,10 +211,10 @@ export const InstagramStoryList = () => {
     }
   ];
 
-  console.log("lodingInstagramStoryList", lodingInstagramStoryList);
+  console.log("loadingInstagramStoryList", loadingInstagramStoryList);
   console.log("instagramStoryList", instagramStoryList);
 
-  if (!lodingInstagramStoryList && instagramStoryList) {
+  if (!loadingInstagramStoryList && instagramStoryList) {
     for (const response of instagramStoryList) {
       // ビジネスアカウント変更前の考慮
 
@@ -255,7 +255,7 @@ export const InstagramStoryList = () => {
 
   return (
     <>
-      {lodingInstagramStoryList ? (
+      {loadingInstagramStoryList ? (
         <Skeleton active />
       ) : (
         <Table
