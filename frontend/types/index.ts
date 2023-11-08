@@ -30,6 +30,8 @@ export type LoginUserAtom = User | null;
 // auth0のアクセストークン
 export type LoginUserAuth0AccessTokenAtom = string | null;
 
+// ====================Instagram===================
+
 export type InstagramMedia = {
   id: string;
   like_count: number;
@@ -46,16 +48,23 @@ export type InstagramMedia = {
   insight?: Insight | InsightError;
 };
 
-export type Tenant = {
-  id: string;
-  user: string;
+export type InstagramUserBasicInfoForCheckData = {
+  business_account_id: string;
   name: string;
-  instagram?: Instagram;
-  facebook?: Facebook;
-  twitter?: Twitter;
-  created_at: string;
-  updated_at: string;
-  last_updated_at: string;
+  username: string;
+  access_token: string;
+};
+
+export type InstagramUserBasicInfo = {
+  username: string;
+  biography: string;
+  followers_count: number;
+  follows_count: number;
+  media_count: number;
+  name: string;
+  profile_picture_url: string;
+  website: string;
+  id: string;
 };
 
 export type Instagram = {
@@ -66,6 +75,18 @@ export type Instagram = {
   access_token: string;
   created_at: string;
   updated_at: string;
+};
+
+export type Tenant = {
+  id: string;
+  user: string;
+  name: string;
+  instagram?: Instagram;
+  facebook?: Facebook;
+  twitter?: Twitter;
+  created_at: string;
+  updated_at: string;
+  last_updated_at: string;
 };
 
 export type Facebook = {

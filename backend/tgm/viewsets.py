@@ -34,7 +34,7 @@ from .models import (
     UserSetting,
 )
 from .serializers import TenantSerializer, UserSerializer, UserSettingSerializer
-from .utils.instagram import InstagramAPIHandler
+from .utils.instagram import InstagramAPIHandler, check_instagram_user
 
 logger = logging.getLogger(__name__)
 
@@ -151,6 +151,38 @@ class InstagramViewSet(viewsets.ViewSet):
         print(response)
 
         return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"])
+    def check_user(self, request):
+        """Instagramユーザーの存在確認.
+
+        ビジネスアカウントIDとアクセストークンを元に存在確認を行う
+        """
+
+        logger.debug(request.data)
+
+        try:
+            business_id = request.data["business_account_id"]
+            token = request.data["token"]
+        except KeyError:
+            logger.error("リクエストパラメータの指定が間違っています。")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        response = check_instagram_user(business_id, token)
+        print(response)
+
+        try:
+            if "error" in response:
+                error_type = response["error"]["type"]
+                return Response(
+                    {"type": error_type},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            return Response(response, status=status.HTTP_200_OK)
+
+        except Exception:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class FacebookViewSet(viewsets.ViewSet):

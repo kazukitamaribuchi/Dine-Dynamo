@@ -45,10 +45,42 @@ class APIEndPoint:
         return f"{INSTAGRAM_API_BASE_URL}/{media_id}"
 
 
+def check_instagram_user(business_account_id: str, token: str):
+    """ビジネスアカウントIDとトークンからユーザーの存在確認を行う."""
+
+    APIPath = APIEndPoint(business_account_id)
+    headers = {
+        "Contet-Type": "application/json",
+        "Authorization": f"Bearer {token}",
+    }
+
+    fields = [
+        "username",
+        "biography",
+        "followers_count",
+        "follows_count",
+        "media_count",
+        "name",
+        "profile_picture_url",
+        "website",
+    ]
+    params = {"fields": ",".join(fields)}
+    response = requests.get(
+        url=APIPath.BUSINESS_ACCOUNT, headers=headers, params=params
+    ).json()
+
+    return response
+
+
 class InstagramAPIHandler:
     """インスタのAPIを扱うHandler."""
 
-    def __init__(self):
+    def __init__(self, user_id: str = None):
+        """初期設定.
+
+        user_idを元DBからインスタの認証情報などを取得
+        """
+
         self.setting()
 
     def setting(self) -> None:
