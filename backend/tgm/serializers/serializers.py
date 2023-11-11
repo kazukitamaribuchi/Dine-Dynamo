@@ -1,10 +1,8 @@
 import logging
-from datetime import datetime
 
-import pytz
 from rest_framework import serializers
 
-from .models import (
+from ..models import (
     Facebook,
     Instagram,
     Tenant,
@@ -13,69 +11,27 @@ from .models import (
     User,
     UserSetting,
 )
-from .utils.formater import utc_to_jst
+from .base_serializers import DynamicFieldsModelSerializer
+from .fields import LastUpdatedAtField
+from .mixins import FormatedDateTimeMixin
 
 logger = logging.getLogger(__name__)
 
 
-class FormatedDateTimeMixin:
-    def get_created_at(self, obj):
-        """作成日時をフォーマットし取得."""
-        if obj.created_at == None:
-            return ""
-        return utc_to_jst(obj.created_at).strftime("%Y/%m/%d %H:%M")
+class InstagramSerializerForTenantCreate(serializers.Serializer):
+    """"""
 
-    def get_updated_at(self, obj):
-        """更新日時をフォーマットし取得."""
-
-        if obj.created_at == None:
-            return ""
-        return utc_to_jst(obj.created_at).strftime("%Y/%m/%d %H:%M")
-
-
-class LastUpdatedAtField(serializers.Field):
-    """最終更新日時."""
-
-    def to_representation(self, value):
-        tokyo_tz = pytz.timezone("Asia/Tokyo")
-        now = datetime.now(tokyo_tz)
-        delta = now - value
-
-        days = delta.days
-
-        if days < 30:
-            return f"{days}日前"
-        elif days < 365:
-            months = days // 30
-            return f"{months}か月前"
-        else:
-            years = days // 365
-            return f"{years}年前"
-
-
-class DynamicFieldsModelSerializer(serializers.ModelSerializer):
-    """シリアライザーの拡張.
-
-    必要なフィールドを指定してそのフィールドだけ返す事が出来る。
-    全部読み込むのが重い時などは良い。
-    """
-
-    def __init__(self, *args, **kwargs):
-        fields = kwargs.pop("fields", None)
-        super(DynamicFieldsModelSerializer, self).__init__(*args, **kwargs)
-
-        if fields is not None:
-            allowed = set(fields)
-            existing = set(self.fields)
-            for field_name in existing - allowed:
-                self.fields.pop(field_name)
+    name = serializers.CharField()
+    username = serializers.CharField()
+    business_account_id = serializers.CharField()
+    access_token = serializers.CharField()
 
 
 class InstagramSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     """Instagramのシリアライザー."""
 
-    created_at = serializers.SerializerMethodField()
-    updated_at = serializers.SerializerMethodField()
+    created_at = serializers.SerializerMethodField(read_only=True)
+    updated_at = serializers.SerializerMethodField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -113,8 +69,52 @@ class TwitterSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
         fields = "__all__"
 
 
+class UserSerializerForDisp(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
+    """ユーザー情報のシリアライザー(参照用)."""
+
+    created_at = serializers.SerializerMethodField()
+    updated_at = serializers.SerializerMethodField()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    class Meta:
+        model = User
+        fields = [
+            "auth0_id",
+            "auth0_name",
+            "username",
+            "email",
+            "email_verified",
+            "phone_number",
+            "created_at",
+            "updated_at",
+        ]
+
+
 class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     """テナントのシリアライザー."""
+
+    user = UserSerializerForDisp(
+        read_only=True,
+        fields=[
+            "auth0_id",
+            "auth0_name",
+            "username",
+            "email",
+            "phone_number",
+            "created_at",
+            "updated_at",
+        ],
+    )
+
+    # auth0_idをリクエスト時に受け取って紐づける用
+    auth0_id = serializers.CharField(write_only=True)
+
+    remarks = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+
+    # テナント登録時用のinstagramData
+    instagramData = InstagramSerializerForTenantCreate(write_only=True)
 
     instagram = InstagramSerializer(
         read_only=True,
@@ -128,28 +128,51 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
             "access_token",
         ],
     )
-    facebook = FacebookSerializer(read_only=True)
-    twitter = TwitterSerializer(read_only=True)
 
-    created_at = serializers.SerializerMethodField()
-    updated_at = serializers.SerializerMethodField()
-    last_updated_at = LastUpdatedAtField(source="updated_at")
+    created_at = serializers.SerializerMethodField(read_only=True)
+    updated_at = serializers.SerializerMethodField(read_only=True)
+    last_updated_at = LastUpdatedAtField(source="updated_at", read_only=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def create(self, validated_data):
+        logger.info("★★★★★★★★★★★★★★★★★")
+        logger.info(validated_data)
+
+        auth0_id = validated_data.pop("auth0_id", None)
+        if not auth0_id:
+            raise serializers.ValidationError("auth0_idのため、ユーザーを取得出来ません。")
+
+        try:
+            user = User.objects.get(auth0_id=auth0_id)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("指定されたauth0_idに対応するユーザーが見つかりませんでした。")
+
+        try:
+            tenant = Tenant.objects.create(
+                user=user,
+                name=validated_data["name"],
+                remarks=validated_data["remarks"],
+            )
+        except Exception:
+            raise serializers.ValidationError("テナント作成時にエラーが発生しました。")
+
+        return tenant
 
     class Meta:
         model = Tenant
         fields = [
             "id",
+            "auth0_id",
             "user",
             "name",
             "instagram",
-            "facebook",
-            "twitter",
+            "instagramData",
             "created_at",
             "updated_at",
             "last_updated_at",
+            "remarks",
         ]
 
 

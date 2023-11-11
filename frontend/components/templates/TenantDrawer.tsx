@@ -9,7 +9,8 @@ import {
   Select,
   Card,
   Avatar,
-  Typography
+  Typography,
+  notification
 } from "antd";
 
 import {
@@ -21,8 +22,10 @@ import {
 import { useEffect, useState } from "react";
 import { AddInstagramDataModal } from "../parts/AddInstagramDataModal";
 import { InstagramUserBasicInfoForCheckData } from "@/types";
-
-const { Option } = Select;
+import { loginUserAtom } from "@/store/atoms";
+import { useAtom } from "jotai";
+import { useAccessToken } from "@/hooks/api/useAccessToken";
+import { addTenant } from "@/hooks/api/addTenant";
 
 const { Title, Text } = Typography;
 
@@ -31,12 +34,22 @@ interface Props {
   closeAddTenantDrawer: () => void;
 }
 
-import { FaSquareInstagram } from "react-icons/fa6";
+const gridStyle: React.CSSProperties = {
+  width: "33%",
+  textAlign: "center",
+  padding: "45px 0",
+  cursor: "pointer"
+};
 
 export const TenantDrawer = ({
   openAddTenantDialog,
   closeAddTenantDrawer
 }: Props) => {
+  const [form] = Form.useForm();
+
+  const [loginUserId] = useAtom(loginUserAtom);
+  const { finalToken: token, error: accessTokenError } = useAccessToken();
+
   const [instagramData, setInstagramData] =
     useState<InstagramUserBasicInfoForCheckData | null>(null);
   const [openAddInstagramData, setOpenAddInstagramData] = useState(false);
@@ -44,7 +57,14 @@ export const TenantDrawer = ({
   // SNS連携確認できたかのフラグ
   const [isSnsConnected, setIsSnsConnected] = useState(false);
 
-  console.log("isSnsConnected", isSnsConnected);
+  // テナント名のバリデーションの状態
+  const [tenantNameStatus, setTenantNameStatus] = useState("");
+
+  // テナント名のエラーテキスト
+  const [tenantNameError, setTenantNameError] = useState<string | null>(null);
+
+  const { tenantDetail, tenantDetailError, loadingTenantDetail, fetchData } =
+    addTenant();
 
   const showAddInstagramData = () => {
     setOpenAddInstagramData(true);
@@ -54,45 +74,59 @@ export const TenantDrawer = ({
     setOpenAddInstagramData(false);
   };
 
+  // テナント名の変更でバリデーションステータスを更新
+  const onTenantNameInputChange = async () => {
+    setTenantNameStatus("validating");
+    try {
+      await form.validateFields(["name"]);
+      setTenantNameStatus("success"); // バリデーション成功
+    } catch (errorInfo) {
+      setTenantNameStatus("error"); // バリデーション失敗
+    }
+  };
+
+  const handleRegister = async () => {
+    try {
+      const formData = await form.validateFields();
+
+      console.log(formData);
+
+      if (loginUserAtom) {
+        fetchData({
+          auth0_id: loginUserId?.auth0_id,
+          token: token,
+          name: formData.name,
+          remarks: formData.remarks,
+          instagram: instagramData
+        });
+      } else {
+        // TODO
+        notification.error({
+          message: "エラー",
+          description: "エラーが発生しました。",
+          duration: 2
+        });
+      }
+    } catch (err) {}
+  };
+
   useEffect(() => {
-    if (instagramData) {
-      console.log("instagramData: ", instagramData);
-    } else {
-      console.log("instagramData: ", instagramData);
+    if (tenantDetailError) {
+      notification.error({
+        message: "エラー",
+        description: "エラーが発生しました。",
+        duration: 2
+      });
+    } else if (tenantDetail) {
+      console.log(tenantDetail);
+
+      notification.success({
+        message: "テナント登録成功",
+        description: "テナントの作成に成功しました。",
+        duration: 2
+      });
     }
-  }, [instagramData]);
-
-  const colStyle = {
-    height: "120px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center", // これによりテキストが垂直に中央揃えになる
-    border: "1px solid #d9d9d9", // 境界線は例示のため
-    borderRadius: "6px",
-
-    flexDirection: "column" // 子要素を縦方向に並べる
-  };
-
-  const gridStyle: React.CSSProperties = {
-    width: "33%",
-    textAlign: "center",
-    padding: "45px 0",
-    cursor: "pointer"
-  };
-
-  const handleInstagramClick = () => {
-    if (instagramData) {
-      console.log("連携済");
-
-      // TODO コンポーネント拡張して確認（username, nameも）
-      // formはdisabledにして連携済フラグを親で管理
-      // 初期化ボタン配置してクリア可能にする（確認モーダルも
-
-      showAddInstagramData();
-    } else {
-      showAddInstagramData();
-    }
-  };
+  }, [tenantDetail, tenantDetailError]);
 
   return (
     <Drawer
@@ -101,7 +135,7 @@ export const TenantDrawer = ({
       onClose={closeAddTenantDrawer}
       open={openAddTenantDialog}
     >
-      <Form layout="vertical">
+      <Form form={form} layout="vertical">
         <Row gutter={16}>
           <Col span={18}>
             <Form.Item
@@ -113,8 +147,15 @@ export const TenantDrawer = ({
                   message: "店舗名は必須項目です。"
                 }
               ]}
+              hasFeedback
+              help={tenantNameError}
+              validateStatus={tenantNameStatus}
             >
-              <Input placeholder="店舗名を入力してください。" />
+              <Input
+                allowClear
+                onChange={onTenantNameInputChange}
+                placeholder="店舗名を入力してください。"
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -122,7 +163,7 @@ export const TenantDrawer = ({
           <Col span={24}>
             <Form.Item label="SNS連携">
               <Card style={{ border: "none", boxShadow: "none" }}>
-                <Card.Grid onClick={handleInstagramClick} style={gridStyle}>
+                <Card.Grid onClick={showAddInstagramData} style={gridStyle}>
                   <div style={{ height: "75px" }}>
                     <Avatar
                       icon={<InstagramFilled />}
@@ -168,7 +209,7 @@ export const TenantDrawer = ({
         <Row gutter={16}>
           <Col span={24}>
             <Form.Item
-              name="description"
+              name="remarks"
               label="備考"
               rules={[
                 {
@@ -176,18 +217,15 @@ export const TenantDrawer = ({
                 }
               ]}
             >
-              <Input.TextArea
-                rows={4}
-                placeholder="please enter url description"
-              />
+              <Input.TextArea rows={4} />
             </Form.Item>
           </Col>
         </Row>
         <Row>
           <Space>
-            <Button onClick={closeAddTenantDrawer}>Cancel</Button>
-            <Button onClick={closeAddTenantDrawer} type="primary">
-              Submit
+            <Button onClick={closeAddTenantDrawer}>キャンセル</Button>
+            <Button onClick={handleRegister} type="primary">
+              登録
             </Button>
           </Space>
         </Row>

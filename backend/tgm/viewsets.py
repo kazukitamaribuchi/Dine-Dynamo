@@ -10,6 +10,7 @@ from rest_framework import (
     generics,
     mixins,
     permissions,
+    serializers,
     status,
     viewsets,
 )
@@ -34,6 +35,7 @@ from .models import (
     UserSetting,
 )
 from .serializers import TenantSerializer, UserSerializer, UserSettingSerializer
+from .serializers.errors import format_serializer_error
 from .utils.instagram import InstagramAPIHandler, check_instagram_user
 
 logger = logging.getLogger(__name__)
@@ -336,3 +338,34 @@ class TenantViewSet(viewsets.ModelViewSet):
     serializer_class = TenantSerializer
     queryset = Tenant.objects.all()
     permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        """テナントを作成する.
+
+        name: 店舗名
+        instagramData: インスタ情報
+            business_account_id: ビジネスアカウントID
+            name
+            username
+            access_token
+        remarks: 備考
+        """
+
+        logger.info(request.data)
+
+        serializer = self.get_serializer(data=request.data)
+        try:
+            serializer.is_valid(raise_exception=True)
+
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except serializers.ValidationError as e:
+            logger.error("テナント作成でエラーが発生しました。")
+            logger.error(serializer.errors)
+
+            # error_detail = format_serializer_error(serializer.errors)
+
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def perform_create(self, serializer):
+        serializer.save()

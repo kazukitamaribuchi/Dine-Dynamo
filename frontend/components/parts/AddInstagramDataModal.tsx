@@ -25,7 +25,6 @@ export const AddInstagramDataModal = ({
   isSnsConnected,
   setIsSnsConnected
 }: Props) => {
-  const [data, setData] = useState(null);
   const [form] = Form.useForm(); // formインスタンスの作成
 
   const [loginUserId] = useAtom(loginUserIdAtom);
@@ -227,7 +226,7 @@ export const AddInstagramDataModal = ({
               key="cancel"
               onClick={handleCancelClick}
             >
-              キャンセル
+              連携解除
             </Button>
           )}
 

@@ -123,6 +123,8 @@ class Tenant(AbstractTimeStamp):
     )
     name = models.CharField(max_length=100)
 
+    remarks = models.TextField(blank=True, null=True)
+
     # TODO 住所などはいる？
 
     def __str__(self):
