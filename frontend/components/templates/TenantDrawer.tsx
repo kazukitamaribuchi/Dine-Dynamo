@@ -127,8 +127,6 @@ export const TenantDrawer = ({
         duration: 2
       });
     } else if (tenantDetail) {
-      console.log(tenantDetail);
-
       notification.success({
         message: "テナント登録成功",
         description: "テナントの作成に成功しました。",

@@ -30,9 +30,39 @@ export const CommonSidebar = () => {
   };
 
   const selectedKey = router.pathname.slice(1);
-  console.log("selectedKey: ", selectedKey);
 
   const fontSize = "14px";
+
+  const menuItems = [
+    {
+      key: "dashboard",
+      icon: <HomeOutlined style={{ fontSize: fontSize }} />,
+      label: <Link href="/dashboard">home</Link>
+    },
+    {
+      key: "instagram",
+      icon: <InstagramOutlined style={{ fontSize: fontSize }} />,
+      label: <Link href="/instagram">instagram</Link>
+    },
+    {
+      key: "tenant",
+      icon: (
+        <ShopTwoTone twoToneColor="#DC143C" style={{ fontSize: fontSize }} />
+      ),
+      label: <Link href="/tenant">tenant</Link>
+    },
+    {
+      key: "settings",
+      icon: <AiOutlineSetting style={{ fontSize: fontSize }} />,
+      label: <Link href="/settings">settings</Link>
+    }
+    // 他のメニューアイテムがあれば、以下に追加
+    // {
+    //   key: "your-key",
+    //   icon: <YourIconComponent style={{ fontSize: fontSize }} />,
+    //   label: <Link href="/your-path">your-label</Link>,
+    // },
+  ];
 
   return (
     <Sider
@@ -43,6 +73,13 @@ export const CommonSidebar = () => {
     >
       <div className="logo" />
       <Menu
+        theme="light"
+        selectedKeys={[selectedKey]}
+        defaultSelectedKeys={["dashboard"]}
+        mode="inline"
+        items={menuItems} // ここを変更
+      />
+      {/* <Menu
         theme="light"
         selectedKeys={[selectedKey]}
         defaultSelectedKeys={["dashboard"]}
@@ -71,28 +108,13 @@ export const CommonSidebar = () => {
         >
           <Link href="/tenant">tenant</Link>
         </Menu.Item>
-        {/* <Menu.Item key="facebook" icon={<FacebookFilled />}>
-          <Link href="/facebook">facebook</Link>
-        </Menu.Item>
-        <Menu.Item key="twitter" icon={<TwitterOutlined />}>
-          <Link href="/twitter">twitter</Link>
-        </Menu.Item>
-        <Menu.Item key="comment" icon={<CommentOutlined />}>
-          <Link href="/comment">comment</Link>
-        </Menu.Item>
-        <Menu.Item key="like" icon={<HeartOutlined />}>
-          <Link href="/like">like</Link>
-        </Menu.Item>
-        <Menu.Item key="competitor" icon={<ShopOutlined />}>
-          <Link href="/competitor">competitor</Link>
-        </Menu.Item> */}
         <Menu.Item
           key="settings"
           icon={<AiOutlineSetting style={{ fontSize: fontSize }} />}
         >
           <Link href="/settings">settings</Link>
         </Menu.Item>
-      </Menu>
+      </Menu> */}
       <div
         style={{
           position: "absolute",

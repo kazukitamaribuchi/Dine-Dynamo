@@ -1,7 +1,7 @@
 import {
   loginUserAccessTokenAtom,
   loginUserIdAtom,
-  loginUserRefreshTokenAtom,
+  loginUserRefreshTokenAtom
 } from "@/store/atoms";
 import { AxiosClient } from "@/utils/axiosClient";
 import { useAtom } from "jotai";
@@ -33,16 +33,16 @@ export const useAccessToken = () => {
               url: `${API_URL.AUTH}/token/verify/`,
               method: "POST",
               data: {
-                token: token,
-              },
+                token: token
+              }
             });
 
             // 有効なトークンならstoreのトークンを使用する
-            console.log("storeのトークンはまだ有効なので使用する", token);
+            // console.log("storeのトークンはまだ有効なので使用する", token);
             setFinalToken(token);
             return;
           } catch (err) {
-            console.log("無効なトークン");
+            // console.log("無効なトークン");
           }
         }
 
@@ -52,18 +52,18 @@ export const useAccessToken = () => {
               url: `${API_URL.AUTH}/token/refresh/`,
               method: "POST",
               data: {
-                refresh: refreshToken,
-              },
+                refresh: refreshToken
+              }
             });
-            console.log(
-              "リフレッシュトークンからトークンを再発行: ",
-              refreshResponse.data.access
-            );
+            // console.log(
+            //   "リフレッシュトークンからトークンを再発行: ",
+            //   refreshResponse.data.access
+            // );
             setFinalToken(refreshResponse.data.access);
             setLoginUserAccessToken(refreshResponse.data.access);
             return;
           } catch (err) {
-            console.log("リフレッシュトークンが無効");
+            // console.log("リフレッシュトークンが無効");
           }
         }
 
@@ -72,10 +72,10 @@ export const useAccessToken = () => {
             url: "api/auth/token/",
             method: "POST",
             data: {
-              auth0_id: loginUserId,
-            },
+              auth0_id: loginUserId
+            }
           });
-          console.log("再発行したトークン: ", response.data);
+          // console.log("再発行したトークン: ", response.data);
 
           setFinalToken(response.data.access_token);
           setLoginUserAccessToken(response.data.access_token);

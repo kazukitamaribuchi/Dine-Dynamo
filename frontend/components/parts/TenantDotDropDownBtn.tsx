@@ -9,10 +9,11 @@ import {
 } from "@ant-design/icons";
 
 import type { MenuProps } from "antd";
-import { isBreakOrContinueStatement } from "typescript";
 
 interface Props {
   tenantId: number;
+  tenantName: string;
+  handleDeleteTenant: (tenantId: number) => void;
 }
 
 const items: MenuProps["items"] = [
@@ -37,24 +38,24 @@ const items: MenuProps["items"] = [
   }
 ];
 
-export const TenantDotDropDownBtn = ({ tenantId }: Props) => {
+export const TenantDotDropDownBtn = ({
+  tenantId,
+  tenantName,
+  handleDeleteTenant
+}: Props) => {
   const showDeleteConfirm = () => {
     Modal.confirm({
-      title: "Are you sure delete this task?",
-      icon: <ExclamationCircleFilled />, // 必要に応じてこのアイコンをインポートしてください
-      content: "Some descriptions",
-      okText: "Yes",
+      title: "テナント削除",
+      icon: <ExclamationCircleFilled />,
+      content: `${tenantName}を削除します。宜しいですか？`,
+      okText: "削除",
       okType: "danger",
-      cancelText: "No",
+      cancelText: "キャンセル",
       onOk() {
-        console.log("OK");
+        handleDeleteTenant(tenantId);
       },
-      onCancel() {
-        console.log("Cancel");
-      }
+      maskClosable: true
     });
-
-    console.log("tenantId", tenantId);
   };
 
   const handleMenuClick: MenuProps["onClick"] = (e) => {

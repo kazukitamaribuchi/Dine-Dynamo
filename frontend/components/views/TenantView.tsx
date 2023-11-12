@@ -1,66 +1,27 @@
-import { Button, Col, Row, Typography, Select, Skeleton, Table } from "antd";
+import {
+  Button,
+  Col,
+  Row,
+  Typography,
+  Select,
+  Skeleton,
+  Table,
+  notification
+} from "antd";
 import { AuthView } from "./AuthView";
 import BaseDashboardView from "./BaseDashboardView";
-import {
-  PlusOutlined,
-  SmallDashOutlined,
-  MoreOutlined
-} from "@ant-design/icons";
-import { TenantCard } from "../parts/TenantCard";
+import { PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useUserTenantList } from "@/hooks/api/useUserTenantList";
 import { TenantDrawer } from "../templates/TenantDrawer";
-import { ColumnsType } from "antd/es/table";
 import { Instagram, Tenant } from "@/types";
-import { data } from "autoprefixer";
 import { TenantDotDropDownBtn } from "../parts/TenantDotDropDownBtn";
-import { FaRecordVinyl } from "react-icons/fa";
+import { deleteTenant } from "@/hooks/api/deleteTenant";
 
 const { Title, Text } = Typography;
-
-const columns = [
-  {
-    title: "店舗名",
-    dataIndex: "name",
-    key: "name",
-    ellipsis: true
-  },
-  {
-    title: "インスタグラム",
-    dataIndex: "instagram",
-    key: "instagram",
-    render: (instagram: Instagram) => {
-      {
-        instagram != null && instagram.username;
-      }
-    }
-  },
-  {
-    title: "更新日時",
-    dataIndex: "updated_at",
-    key: "updated_at"
-  },
-  {
-    title: "作成日時",
-    dataIndex: "created_at",
-    key: "created_at"
-  },
-  {
-    title: "備考",
-    dataIndex: "remarks",
-    key: "備考"
-  },
-  {
-    title: "",
-    dataIndex: "action",
-    key: "action",
-    render: (text, record) => <TenantDotDropDownBtn tenantId={record.id} />,
-    width: 60
-  }
-];
 
 export default function TenantView(props: any) {
   const [tableData, setTableData] = useState<Tenant[]>([]);
@@ -78,6 +39,14 @@ export default function TenantView(props: any) {
 
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
+
+  const {
+    deleteSuccess: tenantDeleteSuccess,
+    setDeleteSuccess,
+    tenantDeleteError,
+    loadingTenantDelete,
+    deleteData
+  } = deleteTenant();
 
   const {
     userTenantList,
@@ -109,8 +78,11 @@ export default function TenantView(props: any) {
 
   useEffect(() => {
     if (userTenantList && !displayLoading) {
-      setTableData(userTenantList);
-      console.log("userTenantList", userTenantList);
+      const newUserTenantList = userTenantList.map((obj, index) => {
+        return { ...obj, key: `${index}` };
+      });
+
+      setTableData(newUserTenantList);
     }
   }, [userTenantList, displayLoading]);
 
@@ -127,6 +99,76 @@ export default function TenantView(props: any) {
       // TODO
     }
   };
+
+  const handleDeleteTenant = (tenantId: number) => {
+    deleteData({ token: token, tenantId: tenantId });
+  };
+
+  useEffect(() => {
+    if (tenantDeleteSuccess) {
+      notification.success({
+        message: "テナント削除",
+        description: "テナントを削除しました。",
+        duration: 2
+      });
+      fetchData({
+        auth0_id: loginUserId,
+        token: token
+      });
+      setDeleteSuccess(false);
+    } else if (tenantDeleteError) {
+      notification.error({
+        message: "エラー",
+        description: "エラーが発生しました。",
+        duration: 2
+      });
+    }
+  }, [tenantDeleteSuccess, tenantDeleteError]);
+
+  const columns = [
+    {
+      title: "店舗名",
+      dataIndex: "name",
+      key: "0",
+      ellipsis: true
+    },
+    {
+      title: "インスタグラム",
+      dataIndex: "instagram",
+      key: "1",
+      render: (instagram: Instagram) => {
+        return instagram ? <>{instagram.username}</> : <>未連携</>;
+      }
+    },
+    {
+      title: "更新日時",
+      dataIndex: "updated_at",
+      key: "2"
+    },
+    {
+      title: "作成日時",
+      dataIndex: "created_at",
+      key: "3"
+    },
+    {
+      title: "備考",
+      dataIndex: "remarks",
+      key: "4"
+    },
+    {
+      title: "",
+      dataIndex: "action",
+      key: "5",
+      render: (_, record) => (
+        <TenantDotDropDownBtn
+          tenantId={record.id}
+          tenantName={record.name}
+          handleDeleteTenant={handleDeleteTenant}
+        />
+      ),
+      width: 60
+    }
+  ];
 
   return (
     <AuthView>
@@ -166,13 +208,11 @@ export default function TenantView(props: any) {
               {displayLoading ? (
                 <Skeleton active />
               ) : (
-                // userTenantList.map((tenant, index) => (
-                //   <Col key={index} span={8} style={{ marginBottom: "10px" }}>
-                //     <TenantCard tenant={tenant} />
-                //   </Col>
-                // ))
-
-                <Table columns={columns} dataSource={userTenantList} />
+                <Table
+                  loading={loadingTenantDelete}
+                  columns={columns}
+                  dataSource={tableData}
+                />
               )}
             </>
           </Row>

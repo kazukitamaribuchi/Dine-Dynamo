@@ -15,8 +15,6 @@ export const PopoverUserIcon = (props: Props) => {
 
   const content = <HoverUserIconMenu />;
 
-  console.log("loginUser", loginUser);
-
   return (
     <Popover placement="bottomLeft" content={content} trigger="click">
       <Button shape="circle" style={{ backgroundColor: "#00a2ae" }}>

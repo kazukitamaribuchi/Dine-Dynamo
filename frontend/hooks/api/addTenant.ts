@@ -51,14 +51,10 @@ export const addTenant = () => {
       setTenantDetail(response.data);
       setLoading(false);
       setError(false);
-
-      console.log("detail", response.data);
     } catch (err) {
       setTenantDetail(null);
       setError(true);
       setLoading(false);
-
-      console.log("err", err);
     }
   };
 
