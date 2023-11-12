@@ -13,8 +13,6 @@ export const deleteTenant = () => {
   const [loadingTenantDelete, setLoading] = useState<boolean>(false);
 
   const deleteData = async ({ token, tenantId }: Props) => {
-    console.log("deleteData", token, tenantId);
-
     try {
       setLoading(true);
       const response = await AxiosClient({
@@ -27,13 +25,9 @@ export const deleteTenant = () => {
       setDeleteSuccess(true);
       setLoading(false);
       setError(false);
-
-      console.log(response);
     } catch (err) {
       setError(true);
       setLoading(false);
-
-      console.log(err);
     }
   };
 

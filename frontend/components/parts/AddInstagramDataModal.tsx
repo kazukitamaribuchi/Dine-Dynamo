@@ -1,14 +1,32 @@
-import { Button, Form, Input, Modal, Spin, notification } from "antd";
+import {
+  Button,
+  Form,
+  FormInstance,
+  Input,
+  Modal,
+  Spin,
+  notification
+} from "antd";
 import { useEffect, useState } from "react";
 import { checkInstagramUser } from "@/hooks/api/checkInstagramUser";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
-import { InstagramUserBasicInfoForCheckData } from "@/types";
+import {
+  InstagramUserBasicInfo,
+  InstagramUserBasicInfoForCheckData,
+  InstagramUserDetailError
+} from "@/types";
 
 import { CheckCircleOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
+
+interface checkDataType {
+  token: string | null;
+  business_account_id: string;
+  instagram_access_token: string;
+}
 
 interface Props {
   openAddInstagramData: boolean;
@@ -16,6 +34,27 @@ interface Props {
   closeAddInstagramData: () => void;
   isSnsConnected: boolean;
   setIsSnsConnected: (flg: boolean) => void;
+  cancelLoading: boolean;
+  setCancelLoading: (flg: boolean) => void;
+  businessAccountStatus: string;
+  setBusinessAccountStatus: (text: string) => void;
+  accessTokenStatus: string;
+  setAccessTokenStatus: (text: string) => void;
+  businessAccountIdError: string | null;
+  setBusinessAccountIdError: (text: string | null) => void;
+  tokenError: string | null;
+  setTokenError: (text: string | null) => void;
+  instagramDataForm: FormInstance;
+
+  userDetail: InstagramUserBasicInfo | null;
+  setUserDetail: (userDetail: InstagramUserBasicInfo | null) => void;
+  userDetailError: InstagramUserDetailError | null;
+  loadingUserDetail: boolean;
+  checkData: ({
+    token,
+    business_account_id,
+    instagram_access_token
+  }: checkDataType) => void;
 }
 
 export const AddInstagramDataModal = ({
@@ -23,67 +62,61 @@ export const AddInstagramDataModal = ({
   setInstagramData,
   closeAddInstagramData,
   isSnsConnected,
-  setIsSnsConnected
-}: Props) => {
-  const [form] = Form.useForm(); // formインスタンスの作成
+  setIsSnsConnected,
+  cancelLoading,
+  setCancelLoading,
+  businessAccountStatus,
+  setBusinessAccountStatus,
+  accessTokenStatus,
+  setAccessTokenStatus,
+  businessAccountIdError,
+  setBusinessAccountIdError,
+  tokenError,
+  setTokenError,
+  instagramDataForm,
 
+  userDetail,
+  setUserDetail,
+  userDetailError,
+  loadingUserDetail,
+  checkData
+}: Props) => {
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
-
-  // キャンセル中のローディング
-  const [cancelLoading, setCancelLoading] = useState(false);
-
-  // ビジネスアカウントIDのバリデーションの状態
-  const [businessAccountStatus, setBusinessAccountStatus] = useState("");
 
   // ビジネスアカウントIDの変更でバリデーションステータスを更新
   const onBusinessAcountIdInputChange = async () => {
     setBusinessAccountStatus("validating");
     try {
-      await form.validateFields(["business_account_id"]);
+      await instagramDataForm.validateFields(["business_account_id"]);
       setBusinessAccountStatus(""); // バリデーション成功
     } catch (errorInfo) {
       setBusinessAccountStatus("error"); // バリデーション失敗
     }
   };
 
-  // アクセストークンの状態
-  const [accessTokenStatus, setAccessTokenStatus] = useState("");
-
   // アクセストークンの変更でバリデーションステータスを更新
   const onAccessTokenInputChange = async () => {
     setAccessTokenStatus("validating");
     try {
-      await form.validateFields(["access_token"]);
+      await instagramDataForm.validateFields(["access_token"]);
       setAccessTokenStatus(""); // バリデーション成功
     } catch (errorInfo) {
       setAccessTokenStatus("error"); // バリデーション失敗
     }
   };
 
-  // ビジネスアカウントIDのエラーテキスト
-  const [businessAccountIdError, setBusinessAccountIdError] = useState<
-    string | null
-  >(null);
-
-  // アクセストークンのエラーテキスト
-  const [tokenError, setTokenError] = useState<string | null>(null);
-
-  // インスタグラムのユーザー確認のhooks
-  const { userDetail, userDetailError, loadingUserDetail, fetchData } =
-    checkInstagramUser();
-
   // 登録ボタンを押下した時の処理
   const handleOk = async () => {
     try {
-      const formData = await form.validateFields();
+      const formData = await instagramDataForm.validateFields();
 
       if (userDetail) {
         setInstagramData({
-          business_account_id: form.getFieldValue("business_account_id"),
+          business_account_id: formData.business_account_id,
           name: userDetail.name,
           username: userDetail.username,
-          access_token: form.getFieldValue("access_token")
+          access_token: formData.access_token
         });
         closeAddInstagramData();
       } else {
@@ -108,10 +141,10 @@ export const AddInstagramDataModal = ({
   const handleConfirmClick = async () => {
     try {
       // フォームのすべてのフィールドに対してバリデーションを実行
-      const formData = await form.validateFields();
+      const formData = await instagramDataForm.validateFields();
 
       // formDataが正しい場合のみ、APIを呼び出す
-      fetchData({
+      checkData({
         token: token,
         business_account_id: formData.business_account_id,
         instagram_access_token: formData.access_token
@@ -242,7 +275,7 @@ export const AddInstagramDataModal = ({
       }
     >
       <Spin spinning={loadingUserDetail || cancelLoading} tip="Loading...">
-        <Form form={form} layout="vertical">
+        <Form form={instagramDataForm} layout="vertical">
           <Form.Item label="username">
             <Input
               disabled

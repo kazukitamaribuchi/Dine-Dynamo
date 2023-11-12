@@ -1,23 +1,13 @@
 import { AxiosClient } from "@/utils/axiosClient";
 import { useState } from "react";
 import { API_URL } from "./urls";
-import { InstagramUserBasicInfo } from "@/types";
+import { InstagramUserBasicInfo, InstagramUserDetailError } from "@/types";
 
-type Props = {
+interface Props {
   token: string | null;
   business_account_id: string;
   instagram_access_token: string;
-};
-
-type InstagramUserDetailError = {
-  code: string;
-  response: {
-    data: {
-      type: string;
-    };
-    status: number;
-  };
-};
+}
 
 export const checkInstagramUser = () => {
   const [userDetail, setUserDetail] = useState<InstagramUserBasicInfo | null>(
@@ -28,7 +18,7 @@ export const checkInstagramUser = () => {
   );
   const [loadingUserDetail, setLoading] = useState<boolean>(false);
 
-  const fetchData = async ({
+  const checkData = async ({
     token,
     business_account_id,
     instagram_access_token
@@ -56,5 +46,11 @@ export const checkInstagramUser = () => {
     }
   };
 
-  return { userDetail, userDetailError, loadingUserDetail, fetchData };
+  return {
+    userDetail,
+    setUserDetail,
+    userDetailError,
+    loadingUserDetail,
+    checkData
+  };
 };

@@ -25,7 +25,6 @@ export const useUserTenantList = () => {
       });
       setData(response.data);
       setLoadingUserTenantList(false);
-      console.log(response.data);
     } catch (err) {
       setError(err);
       setLoadingUserTenantList(false);

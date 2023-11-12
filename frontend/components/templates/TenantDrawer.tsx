@@ -28,6 +28,7 @@ import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { addTenant } from "@/hooks/api/addTenant";
 import { isTypeOnlyImportDeclaration } from "typescript";
 import { init } from "next/dist/compiled/@vercel/og/satori";
+import { checkInstagramUser } from "@/hooks/api/checkInstagramUser";
 
 const { Title, Text } = Typography;
 
@@ -50,6 +51,7 @@ export const TenantDrawer = ({
   updateTenant
 }: Props) => {
   const [form] = Form.useForm();
+  const [instagramDataForm] = Form.useForm();
 
   const [isOkDisabled, setIsOkDisabled] = useState(true);
 
@@ -69,8 +71,34 @@ export const TenantDrawer = ({
   // テナント名のエラーテキスト
   const [tenantNameError, setTenantNameError] = useState<string | null>(null);
 
+  // キャンセル中のローディング
+  const [cancelLoading, setCancelLoading] = useState(false);
+
+  // ビジネスアカウントIDのバリデーションの状態
+  const [businessAccountStatus, setBusinessAccountStatus] = useState("");
+
+  // アクセストークンの状態
+  const [accessTokenStatus, setAccessTokenStatus] = useState("");
+
+  // ビジネスアカウントIDのエラーテキスト
+  const [businessAccountIdError, setBusinessAccountIdError] = useState<
+    string | null
+  >(null);
+
+  // アクセストークンのエラーテキスト
+  const [tokenError, setTokenError] = useState<string | null>(null);
+
   const { tenantDetail, tenantDetailError, loadingTenantDetail, fetchData } =
     addTenant();
+
+  // インスタグラムのユーザー確認のhooks
+  const {
+    userDetail,
+    setUserDetail,
+    userDetailError,
+    loadingUserDetail,
+    checkData
+  } = checkInstagramUser();
 
   const showAddInstagramData = () => {
     setOpenAddInstagramData(true);
@@ -97,8 +125,6 @@ export const TenantDrawer = ({
   const handleRegister = async () => {
     try {
       const formData = await form.validateFields();
-
-      console.log(formData);
 
       if (loginUserId) {
         fetchData({
@@ -141,6 +167,17 @@ export const TenantDrawer = ({
   const init = () => {
     form.resetFields();
     setInstagramData(null);
+    setTenantNameStatus("");
+    setIsOkDisabled(true);
+
+    instagramDataForm.resetFields();
+    setCancelLoading(false);
+    setBusinessAccountStatus("");
+    setAccessTokenStatus("");
+    setBusinessAccountIdError(null);
+    setTokenError(null);
+
+    setIsSnsConnected(false);
   };
 
   return (
@@ -256,6 +293,22 @@ export const TenantDrawer = ({
         closeAddInstagramData={closeAddInstagramData}
         isSnsConnected={isSnsConnected}
         setIsSnsConnected={setIsSnsConnected}
+        cancelLoading={cancelLoading}
+        setCancelLoading={setCancelLoading}
+        businessAccountStatus={businessAccountStatus}
+        setBusinessAccountStatus={setBusinessAccountStatus}
+        accessTokenStatus={accessTokenStatus}
+        setAccessTokenStatus={setAccessTokenStatus}
+        businessAccountIdError={businessAccountIdError}
+        setBusinessAccountIdError={setBusinessAccountIdError}
+        tokenError={tokenError}
+        setTokenError={setTokenError}
+        instagramDataForm={instagramDataForm}
+        userDetail={userDetail}
+        setUserDetail={setUserDetail}
+        userDetailError={userDetailError}
+        loadingUserDetail={loadingUserDetail}
+        checkData={checkData}
       />
     </Drawer>
   );

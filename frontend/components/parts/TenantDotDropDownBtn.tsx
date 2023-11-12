@@ -68,7 +68,7 @@ export const TenantDotDropDownBtn = ({
         break;
       case "2":
         // テナント削除 => コンファームしてから親のメソッド呼ぶ
-        console.log(e);
+        // console.log(e);
         showDeleteConfirm();
         break;
     }

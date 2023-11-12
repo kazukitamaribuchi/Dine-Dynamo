@@ -139,9 +139,6 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
         super().__init__(*args, **kwargs)
 
     def create(self, validated_data):
-        logger.info("★★★★★★★★★★★★★★★★★")
-        logger.info(validated_data)
-
         auth0_id = validated_data.pop("auth0_id", None)
         if not auth0_id:
             raise serializers.ValidationError("auth0_idのため、ユーザーを取得出来ません。")
@@ -159,6 +156,14 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
             )
         except Exception:
             raise serializers.ValidationError("テナント作成時にエラーが発生しました。")
+
+        instagramData = validated_data.pop("instagramData", None)
+        if instagramData:
+            try:
+                Instagram.objects.create(tenant=tenant, **instagramData)
+                logger.info("テナントとインスタグラムの紐づけに成功しました。")
+            except Exception:
+                raise serializers.ValidationError("既に他のテナントに紐づくインスタグラムアカウントです。")
 
         return tenant
 

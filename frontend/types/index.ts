@@ -152,3 +152,13 @@ export type InsightErrorDetail = {
   error_user_msg: string;
   fbtrace_id: string;
 };
+
+export type InstagramUserDetailError = {
+  code: string;
+  response: {
+    data: {
+      type: string;
+    };
+    status: number;
+  };
+};
