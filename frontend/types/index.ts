@@ -82,6 +82,7 @@ export type Tenant = {
   user: string;
   name: string;
   instagram?: Instagram;
+  connected_instagram: boolean;
   facebook?: Facebook;
   twitter?: Twitter;
   created_at: string;

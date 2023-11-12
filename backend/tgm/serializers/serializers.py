@@ -114,7 +114,7 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     remarks = serializers.CharField(required=False, allow_null=True, allow_blank=True)
 
     # テナント登録時用のinstagramData
-    instagramData = InstagramSerializerForTenantCreate(write_only=True)
+    instagramData = InstagramSerializerForTenantCreate(write_only=True, allow_null=True)
 
     instagram = InstagramSerializer(
         read_only=True,
@@ -128,6 +128,8 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
             "access_token",
         ],
     )
+
+    connected_instagram = serializers.SerializerMethodField(read_only=True)
 
     created_at = serializers.SerializerMethodField(read_only=True)
     updated_at = serializers.SerializerMethodField(read_only=True)
@@ -160,6 +162,9 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
 
         return tenant
 
+    def get_connected_instagram(self, obj):
+        return hasattr(obj, "instagram")
+
     class Meta:
         model = Tenant
         fields = [
@@ -168,6 +173,7 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
             "user",
             "name",
             "instagram",
+            "connected_instagram",
             "instagramData",
             "created_at",
             "updated_at",

@@ -23,7 +23,7 @@ import { useRouter } from "next/router";
 export const CommonSidebar = () => {
   const router = useRouter();
 
-  const [collapsed, setCollapsed] = useState(true);
+  const [collapsed, setCollapsed] = useState(false);
   const onCollapse = () => {
     const newCollapsed = !collapsed;
     setCollapsed(newCollapsed);

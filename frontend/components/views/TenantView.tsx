@@ -1,7 +1,11 @@
-import { Button, Col, Row, Typography, Select, Skeleton } from "antd";
+import { Button, Col, Row, Typography, Select, Skeleton, Table } from "antd";
 import { AuthView } from "./AuthView";
 import BaseDashboardView from "./BaseDashboardView";
-import { PlusOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  SmallDashOutlined,
+  MoreOutlined
+} from "@ant-design/icons";
 import { TenantCard } from "../parts/TenantCard";
 import { useEffect, useState } from "react";
 import { loginUserIdAtom } from "@/store/atoms";
@@ -9,43 +13,61 @@ import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { useUserTenantList } from "@/hooks/api/useUserTenantList";
 import { TenantDrawer } from "../templates/TenantDrawer";
+import { ColumnsType } from "antd/es/table";
+import { Instagram, Tenant } from "@/types";
+import { data } from "autoprefixer";
+import { TenantDotDropDownBtn } from "../parts/TenantDotDropDownBtn";
+import { FaRecordVinyl } from "react-icons/fa";
 
 const { Title, Text } = Typography;
 
-const items = [
+const columns = [
   {
-    key: "1",
-    label: "UserName",
-    children: "Zhou Maomao"
+    title: "店舗名",
+    dataIndex: "name",
+    key: "name",
+    ellipsis: true
   },
   {
-    key: "2",
-    label: "Telephone",
-    children: "1810000000"
+    title: "インスタグラム",
+    dataIndex: "instagram",
+    key: "instagram",
+    render: (instagram: Instagram) => {
+      {
+        instagram != null && instagram.username;
+      }
+    }
   },
   {
-    key: "3",
-    label: "Live",
-    children: "Hangzhou, Zhejiang"
+    title: "更新日時",
+    dataIndex: "updated_at",
+    key: "updated_at"
   },
   {
-    key: "4",
-    label: "Address",
-    span: 2,
-    children: "No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China"
+    title: "作成日時",
+    dataIndex: "created_at",
+    key: "created_at"
   },
   {
-    key: "5",
-    label: "Remark",
-    children: "empty"
+    title: "備考",
+    dataIndex: "remarks",
+    key: "備考"
+  },
+  {
+    title: "",
+    dataIndex: "action",
+    key: "action",
+    render: (text, record) => <TenantDotDropDownBtn tenantId={record.id} />,
+    width: 60
   }
 ];
 
 export default function TenantView(props: any) {
-  // 新しい状態変数
+  const [tableData, setTableData] = useState<Tenant[]>([]);
+
   const [loading, setLoading] = useState(true);
 
-  // 最低ローディング秒数を2秒と設定
+  // 最低ローディング秒数を800msと設定
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
@@ -57,8 +79,12 @@ export default function TenantView(props: any) {
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
-  const { userTenantList, userTenantListError, loadingUserTenantList } =
-    useUserTenantList({ auth0_id: loginUserId, token: token });
+  const {
+    userTenantList,
+    userTenantListError,
+    loadingUserTenantList,
+    fetchData
+  } = useUserTenantList();
 
   const [openAddTenantDialog, setOpenAddTenantDialog] = useState(false);
 
@@ -70,12 +96,37 @@ export default function TenantView(props: any) {
     setOpenAddTenantDialog(false);
   };
 
-  console.log("userTenantList", userTenantList);
-
-  const url =
-    "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg";
-
   const displayLoading = loadingUserTenantList || loading;
+
+  useEffect(() => {
+    if (loginUserId && token) {
+      fetchData({
+        auth0_id: loginUserId,
+        token: token
+      });
+    }
+  }, [loginUserId, token]);
+
+  useEffect(() => {
+    if (userTenantList && !displayLoading) {
+      setTableData(userTenantList);
+      console.log("userTenantList", userTenantList);
+    }
+  }, [userTenantList, displayLoading]);
+
+  const updateTenant = () => {
+    // テナントがアップデートされたら、再度取得する
+    // 子コンポーネントに渡すメソッド
+
+    if (loginUserId && token) {
+      fetchData({
+        auth0_id: loginUserId,
+        token: token
+      });
+    } else {
+      // TODO
+    }
+  };
 
   return (
     <AuthView>
@@ -105,6 +156,7 @@ export default function TenantView(props: any) {
                 <TenantDrawer
                   openAddTenantDialog={openAddTenantDialog}
                   closeAddTenantDrawer={closeAddTenantDrawer}
+                  updateTenant={updateTenant}
                 />
               </div>
             </Col>
@@ -114,11 +166,13 @@ export default function TenantView(props: any) {
               {displayLoading ? (
                 <Skeleton active />
               ) : (
-                userTenantList.map((tenant, index) => (
-                  <Col key={index} span={8}>
-                    <TenantCard tenant={tenant} />
-                  </Col>
-                ))
+                // userTenantList.map((tenant, index) => (
+                //   <Col key={index} span={8} style={{ marginBottom: "10px" }}>
+                //     <TenantCard tenant={tenant} />
+                //   </Col>
+                // ))
+
+                <Table columns={columns} dataSource={userTenantList} />
               )}
             </>
           </Row>

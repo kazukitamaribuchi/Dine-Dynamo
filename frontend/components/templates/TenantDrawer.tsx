@@ -22,16 +22,19 @@ import {
 import { useEffect, useState } from "react";
 import { AddInstagramDataModal } from "../parts/AddInstagramDataModal";
 import { InstagramUserBasicInfoForCheckData } from "@/types";
-import { loginUserAtom } from "@/store/atoms";
+import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { addTenant } from "@/hooks/api/addTenant";
+import { isTypeOnlyImportDeclaration } from "typescript";
+import { init } from "next/dist/compiled/@vercel/og/satori";
 
 const { Title, Text } = Typography;
 
 interface Props {
   openAddTenantDialog: boolean;
   closeAddTenantDrawer: () => void;
+  updateTenant: () => void;
 }
 
 const gridStyle: React.CSSProperties = {
@@ -43,11 +46,14 @@ const gridStyle: React.CSSProperties = {
 
 export const TenantDrawer = ({
   openAddTenantDialog,
-  closeAddTenantDrawer
+  closeAddTenantDrawer,
+  updateTenant
 }: Props) => {
   const [form] = Form.useForm();
 
-  const [loginUserId] = useAtom(loginUserAtom);
+  const [isOkDisabled, setIsOkDisabled] = useState(true);
+
+  const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
   const [instagramData, setInstagramData] =
@@ -76,12 +82,15 @@ export const TenantDrawer = ({
 
   // テナント名の変更でバリデーションステータスを更新
   const onTenantNameInputChange = async () => {
+    setIsOkDisabled(true);
     setTenantNameStatus("validating");
     try {
       await form.validateFields(["name"]);
+      setIsOkDisabled(false);
       setTenantNameStatus("success"); // バリデーション成功
     } catch (errorInfo) {
       setTenantNameStatus("error"); // バリデーション失敗
+      setIsOkDisabled(true);
     }
   };
 
@@ -91,9 +100,9 @@ export const TenantDrawer = ({
 
       console.log(formData);
 
-      if (loginUserAtom) {
+      if (loginUserId) {
         fetchData({
-          auth0_id: loginUserId?.auth0_id,
+          auth0_id: loginUserId,
           token: token,
           name: formData.name,
           remarks: formData.remarks,
@@ -125,8 +134,16 @@ export const TenantDrawer = ({
         description: "テナントの作成に成功しました。",
         duration: 2
       });
+      init();
+      updateTenant();
+      closeAddTenantDrawer();
     }
   }, [tenantDetail, tenantDetailError]);
+
+  const init = () => {
+    form.resetFields();
+    setInstagramData(null);
+  };
 
   return (
     <Drawer
@@ -224,7 +241,11 @@ export const TenantDrawer = ({
         <Row>
           <Space>
             <Button onClick={closeAddTenantDrawer}>キャンセル</Button>
-            <Button onClick={handleRegister} type="primary">
+            <Button
+              disabled={isOkDisabled}
+              onClick={handleRegister}
+              type="primary"
+            >
               登録
             </Button>
           </Space>

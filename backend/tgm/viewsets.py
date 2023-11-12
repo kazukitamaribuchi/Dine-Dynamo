@@ -223,12 +223,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(methods=["get"], detail=True)
     def tenants(self, request, pk=None):
-        """"""
-
-        # user = User.objects.get(auth0_id="google-oauth2|103115413586892783733")
+        """ユーザー毎のテナント一覧を取得する."""
 
         user = self.get_object()
-        tenants = user.user_tenants.all()
+        tenants = user.user_tenants.all().order_by("-created_at")
         serializer = TenantSerializer(tenants, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
