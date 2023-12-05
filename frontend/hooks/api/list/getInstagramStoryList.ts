@@ -1,14 +1,14 @@
 import { AxiosClient } from "@/utils/axiosClient";
 import { useEffect, useState } from "react";
-import { API_URL } from "./urls";
+import { API_URL } from "../urls";
 import { InstagramStory } from "@/types";
 
 type Props = {
-  auth0_id: string | null;
+  auth0Id: string | null;
   token: string | null;
 };
 
-export const useInstagramStoryList = ({ auth0_id, token }: Props) => {
+export const getInstagramStoryList = ({ auth0Id, token }: Props) => {
   const [instagramStoryList, setData] = useState<Array<InstagramStory>>([]);
   const [instagramStoryListError, setError] = useState<unknown>(null);
   const [loadingInstagramStoryList, setLoadingInstagramStoryList] =
@@ -33,10 +33,10 @@ export const useInstagramStoryList = ({ auth0_id, token }: Props) => {
       }
     };
 
-    if (auth0_id && token) {
+    if (auth0Id && token) {
       fetchData();
     }
-  }, [auth0_id, token]);
+  }, [auth0Id, token]);
 
   return {
     instagramStoryList,

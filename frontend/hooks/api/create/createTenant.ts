@@ -1,12 +1,11 @@
 import { Tenant, InstagramUserBasicInfoForCheckData } from "@/types";
 import { AxiosClient } from "@/utils/axiosClient";
 import { useState } from "react";
-import { API_URL } from "./urls";
+import { API_URL } from "../urls";
 
 type Props = {
-  auth0_id: string | undefined;
+  auth0Id: string | undefined;
   token: string | null;
-
   name: string | null;
   remarks: string | null;
   instagram: InstagramUserBasicInfoForCheckData | null;
@@ -21,20 +20,20 @@ type Props = {
 //   }
 // }
 
-export const addTenant = () => {
+export const createTenant = () => {
   const [tenantDetail, setTenantDetail] = useState<Tenant | null>(null);
   const [tenantDetailError, setError] = useState<boolean>(false);
   const [loadingTenantDetail, setLoading] = useState<boolean>(false);
 
   const fetchData = async ({
-    auth0_id,
+    auth0Id,
     token,
     name,
     remarks,
     instagram
   }: Props) => {
+    setLoading(true);
     try {
-      setLoading(true);
       const response = await AxiosClient({
         url: `${API_URL.TENANT}/`,
         method: "POST",
@@ -42,7 +41,7 @@ export const addTenant = () => {
           Authorization: `Bearer ${token}`
         },
         data: {
-          auth0_id: auth0_id,
+          auth0Id: auth0Id,
           name: name,
           remarks: remarks ? remarks : "",
           instagramData: instagram

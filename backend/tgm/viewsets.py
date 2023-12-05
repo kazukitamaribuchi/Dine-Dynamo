@@ -54,7 +54,7 @@ class AuthViewSet(viewsets.ViewSet):
         """
 
         try:
-            auth0_id = request.data["auth0_id"]
+            auth0_id = request.data["auth0Id"]
             logger.info("auth0_id: %s", auth0_id)
         except:
             logger.warning("不正なリクエストです。")
@@ -243,7 +243,7 @@ class UserViewSet(viewsets.ModelViewSet):
         logger.debug("request.data: {}".format(request.data))
 
         try:
-            auth0_id = request.data["auth0_id"]
+            auth0_id = request.data["auth0Id"]
 
         except KeyError as e:
             logger.error(e)
@@ -261,9 +261,7 @@ class UserViewSet(viewsets.ModelViewSet):
         try:
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
-                logger.info(
-                    "新規ユーザーを登録しました。 auth0_id: {}".format(request.data["auth0_id"])
-                )
+                logger.info("新規ユーザーを登録しました。 auth0_id: {}".format(auth0_id))
                 self.perform_create(serializer)
 
                 # TODO 認証メール送信
@@ -297,7 +295,7 @@ class UserViewSet(viewsets.ModelViewSet):
         logger.debug("request.data: {}".format(request.data))
 
         try:
-            auth0_id = request.data["auth0_id"]
+            auth0_id = request.data["auth0Id"]
 
         except KeyError as e:
             logger.error(e)
@@ -318,9 +316,7 @@ class UserViewSet(viewsets.ModelViewSet):
         except User.DoesNotExist:
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
-                logger.info(
-                    "新規ユーザーを登録しました。 auth0_id: {}".format(request.data["auth0_id"])
-                )
+                logger.info("新規ユーザーを登録しました。 auth0_id: {}".format(auth0_id))
                 self.perform_create(serializer)
                 return Response(status.HTTP_201_CREATED)
 
@@ -359,11 +355,12 @@ class TenantViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except serializers.ValidationError as e:
             logger.error("テナント作成でエラーが発生しました。")
-            logger.error(serializer.errors)
+            logger.error(e)
 
-            # error_detail = format_serializer_error(serializer.errors)
+            error_detail = format_serializer_error(e)
+            logger.info(error_detail)
 
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(e, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()

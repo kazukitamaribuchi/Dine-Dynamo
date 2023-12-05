@@ -3,7 +3,7 @@ import type { ColumnsType, TableProps } from "antd/es/table";
 import { ReactNode } from "react";
 import { formatDateToJST } from "../../../utils/functions";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
-import { useInstagramMediaList } from "@/hooks/api/useInstagramMediaList";
+import { getInstagramMediaList } from "@/hooks/api/list/getInstagramMediaList";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { InstagramMediaGrid } from "@/components/templates/instagram/InstagramMediaGrid";
@@ -30,7 +30,7 @@ export const InstagramMediaList = ({ mediaStyle }: Props) => {
     instagramMediaList,
     instagramMediaListError,
     loadingInstagramMediaList
-  } = useInstagramMediaList({ auth0_id: loginUserId, token: token });
+  } = getInstagramMediaList({ auth0Id: loginUserId, token: token });
 
   let data: DataType[] = [];
 

@@ -8,7 +8,7 @@ import {
   notification
 } from "antd";
 import { useEffect, useState } from "react";
-import { checkInstagramUser } from "@/hooks/api/checkInstagramUser";
+import { checkInstagramUser } from "@/hooks/api/action/checkInstagramUser";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";

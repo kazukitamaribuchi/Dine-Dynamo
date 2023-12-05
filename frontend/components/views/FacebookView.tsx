@@ -13,8 +13,8 @@ export default function FacebookView(props: any) {
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
   const { userDetail, error } = useGetUserDetail({
-    auth0_id: loginUserId,
-    token: token,
+    auth0Id: loginUserId,
+    token: token
   });
 
   console.log("userDetail: ", userDetail);

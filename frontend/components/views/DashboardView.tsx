@@ -31,7 +31,7 @@ export default function DashBoardView(props: any) {
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
   const { userDetail, error } = useGetUserDetail({
-    auth0_id: loginUserId,
+    auth0Id: loginUserId,
     token: token
   });
 

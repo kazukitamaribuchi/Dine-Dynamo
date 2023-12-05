@@ -1,4 +1,4 @@
-import { Button, Dropdown, Menu, Modal, Popconfirm, message } from "antd";
+import { Button, Dropdown, Modal } from "antd";
 
 import {
   SearchOutlined,
@@ -14,6 +14,7 @@ interface Props {
   tenantId: number;
   tenantName: string;
   handleDeleteTenant: (tenantId: number) => void;
+  showTenantDrawerUpdateMode: (tenantId: number) => void;
 }
 
 const items: MenuProps["items"] = [
@@ -41,7 +42,8 @@ const items: MenuProps["items"] = [
 export const TenantDotDropDownBtn = ({
   tenantId,
   tenantName,
-  handleDeleteTenant
+  handleDeleteTenant,
+  showTenantDrawerUpdateMode
 }: Props) => {
   const showDeleteConfirm = () => {
     Modal.confirm({
@@ -62,6 +64,7 @@ export const TenantDotDropDownBtn = ({
     switch (e.key) {
       case "0":
         // 詳細確認 => 親のメソッド呼ぶ
+        showTenantDrawerUpdateMode(tenantId);
         break;
       case "1":
         // テナント切り替え => 親のメソッド呼ぶ

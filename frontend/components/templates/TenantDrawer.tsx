@@ -21,21 +21,23 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { AddInstagramDataModal } from "../parts/AddInstagramDataModal";
-import { InstagramUserBasicInfoForCheckData } from "@/types";
+import { InstagramUserBasicInfoForCheckData, Tenant } from "@/types";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
-import { addTenant } from "@/hooks/api/addTenant";
+import { createTenant } from "@/hooks/api/create/createTenant";
 import { isTypeOnlyImportDeclaration } from "typescript";
 import { init } from "next/dist/compiled/@vercel/og/satori";
-import { checkInstagramUser } from "@/hooks/api/checkInstagramUser";
+import { checkInstagramUser } from "@/hooks/api/action/checkInstagramUser";
 
 const { Title, Text } = Typography;
 
 interface Props {
-  openAddTenantDialog: boolean;
-  closeAddTenantDrawer: () => void;
+  openTenantDialog: boolean;
+  closeTenantDrawer: () => void;
   updateTenant: () => void;
+  mode: string;
+  data: Tenant | null;
 }
 
 const gridStyle: React.CSSProperties = {
@@ -46,20 +48,26 @@ const gridStyle: React.CSSProperties = {
 };
 
 export const TenantDrawer = ({
-  openAddTenantDialog,
-  closeAddTenantDrawer,
-  updateTenant
+  openTenantDialog,
+  closeTenantDrawer,
+  updateTenant,
+  mode
 }: Props) => {
+  // テナント情報のフォーム
   const [form] = Form.useForm();
+  // インスタ情報のフォーム
   const [instagramDataForm] = Form.useForm();
 
+  // 登録ボタンの活性非活性状態
   const [isOkDisabled, setIsOkDisabled] = useState(true);
 
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
 
+  // インスタデータ
   const [instagramData, setInstagramData] =
     useState<InstagramUserBasicInfoForCheckData | null>(null);
+  // インスタのモーダル状態
   const [openAddInstagramData, setOpenAddInstagramData] = useState(false);
 
   // SNS連携確認できたかのフラグ
@@ -88,8 +96,9 @@ export const TenantDrawer = ({
   // アクセストークンのエラーテキスト
   const [tokenError, setTokenError] = useState<string | null>(null);
 
+  // テナント追加のhooks
   const { tenantDetail, tenantDetailError, loadingTenantDetail, fetchData } =
-    addTenant();
+    createTenant();
 
   // インスタグラムのユーザー確認のhooks
   const {
@@ -100,10 +109,12 @@ export const TenantDrawer = ({
     checkData
   } = checkInstagramUser();
 
+  // インスタ追加のモーダル開く
   const showAddInstagramData = () => {
     setOpenAddInstagramData(true);
   };
 
+  // インスタ追加のモーダル閉じる
   const closeAddInstagramData = () => {
     setOpenAddInstagramData(false);
   };
@@ -122,13 +133,15 @@ export const TenantDrawer = ({
     }
   };
 
+  // 登録ボタン押下時の処理
   const handleRegister = async () => {
     try {
       const formData = await form.validateFields();
 
       if (loginUserId) {
         fetchData({
-          auth0_id: loginUserId,
+          mode: "create",
+          auth0Id: loginUserId,
           token: token,
           name: formData.name,
           remarks: formData.remarks,
@@ -145,6 +158,7 @@ export const TenantDrawer = ({
     } catch (err) {}
   };
 
+  // テナント作成後の動作
   useEffect(() => {
     if (tenantDetailError) {
       notification.error({
@@ -160,10 +174,11 @@ export const TenantDrawer = ({
       });
       init();
       updateTenant();
-      closeAddTenantDrawer();
+      closeTenantDrawer();
     }
   }, [tenantDetail, tenantDetailError]);
 
+  // フォーム等の初期化
   const init = () => {
     form.resetFields();
     setInstagramData(null);
@@ -184,8 +199,8 @@ export const TenantDrawer = ({
     <Drawer
       title="Create a new tenant"
       size="large"
-      onClose={closeAddTenantDrawer}
-      open={openAddTenantDialog}
+      onClose={closeTenantDrawer}
+      open={openTenantDialog}
     >
       <Form form={form} layout="vertical">
         <Row gutter={16}>
@@ -275,7 +290,7 @@ export const TenantDrawer = ({
         </Row>
         <Row>
           <Space>
-            <Button onClick={closeAddTenantDrawer}>キャンセル</Button>
+            <Button onClick={closeTenantDrawer}>キャンセル</Button>
             <Button
               disabled={isOkDisabled}
               onClick={handleRegister}

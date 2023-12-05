@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { API_URL } from "./urls";
 
 type Props = {
-  auth0_id: string | null;
+  auth0Id: string | null;
   token: string | null;
 };
 
-export const useGetUserDetail = ({ auth0_id, token }: Props) => {
+export const useGetUserDetail = ({ auth0Id, token }: Props) => {
   const [loginUser, setLoginUser] = useAtom(loginUserAtom);
   const [userDetail, setUserDetail] = useState(null);
   const [error, setError] = useState<unknown>(null);
@@ -18,11 +18,11 @@ export const useGetUserDetail = ({ auth0_id, token }: Props) => {
     const fetchData = async () => {
       try {
         const response = await AxiosClient({
-          url: `${API_URL.USER}/${auth0_id}/`,
+          url: `${API_URL.USER}/${auth0Id}/`,
           method: "GET",
           headers: {
-            Authorization: `Bearer ${token}`,
-          },
+            Authorization: `Bearer ${token}`
+          }
         });
         setUserDetail(response.data);
         setLoginUser(response.data);
@@ -31,10 +31,10 @@ export const useGetUserDetail = ({ auth0_id, token }: Props) => {
       }
     };
 
-    if (auth0_id && token && userDetail == null) {
+    if (auth0Id && token && userDetail == null) {
       fetchData();
     }
-  }, [auth0_id, token]);
+  }, [auth0Id, token]);
 
   return { userDetail, error };
 };

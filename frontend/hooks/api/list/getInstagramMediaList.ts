@@ -1,14 +1,14 @@
 import { AxiosClient } from "@/utils/axiosClient";
 import { useEffect, useState } from "react";
-import { API_URL } from "./urls";
+import { API_URL } from "../urls";
 import { InstagramMedia } from "@/types";
 
 type Props = {
-  auth0_id: string | null;
+  auth0Id: string | null;
   token: string | null;
 };
 
-export const useInstagramMediaList = ({ auth0_id, token }: Props) => {
+export const getInstagramMediaList = ({ auth0Id, token }: Props) => {
   const [instagramMediaList, setData] = useState<Array<InstagramMedia>>([]);
   const [instagramMediaListError, setError] = useState<unknown>(null);
   const [loadingInstagramMediaList, setLoadingInstagramMediaList] =
@@ -33,10 +33,10 @@ export const useInstagramMediaList = ({ auth0_id, token }: Props) => {
       }
     };
 
-    if (auth0_id && token) {
+    if (auth0Id && token) {
       fetchData();
     }
-  }, [auth0_id, token]);
+  }, [auth0Id, token]);
 
   return {
     instagramMediaList,

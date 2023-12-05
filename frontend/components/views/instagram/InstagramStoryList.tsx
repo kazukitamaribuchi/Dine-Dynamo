@@ -3,10 +3,10 @@ import type { ColumnsType, TableProps } from "antd/es/table";
 import { ReactNode } from "react";
 import { formatDateToJST } from "../../../utils/functions";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
-import { useInstagramMediaList } from "@/hooks/api/useInstagramMediaList";
+import { getInstagramMediaList } from "@/hooks/api/list/getInstagramMediaList";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
-import { InstagramStory, StoryInsightValueDetail } from "@/types";
+import { InstagramStory } from "@/types";
 import { data } from "autoprefixer";
 
 interface DataType {
@@ -132,7 +132,7 @@ export const InstagramStoryList = () => {
   //   instagramStoryList,
   //   instagramStoryListError,
   //   loadingInstagramStoryList
-  // } = useInstagramStoryList({ auth0_id: loginUserId, token: token });
+  // } = useInstagramStoryList({ auth0Id: loginUserId, token: token });
 
   let data: DataType[] = [];
 

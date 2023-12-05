@@ -15,11 +15,11 @@ import { useEffect, useState } from "react";
 import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
-import { useUserTenantList } from "@/hooks/api/useUserTenantList";
+import { getUserTenantList } from "@/hooks/api/list/getUserTenantList";
 import { TenantDrawer } from "../templates/TenantDrawer";
 import { Instagram, Tenant } from "@/types";
 import { TenantDotDropDownBtn } from "../parts/TenantDotDropDownBtn";
-import { deleteTenant } from "@/hooks/api/deleteTenant";
+import { deleteTenant } from "@/hooks/api/delete/deleteTenant";
 
 const { Title, Text } = Typography;
 
@@ -53,16 +53,25 @@ export default function TenantView(props: any) {
     userTenantListError,
     loadingUserTenantList,
     fetchData
-  } = useUserTenantList();
+  } = getUserTenantList();
 
-  const [openAddTenantDialog, setOpenAddTenantDialog] = useState(false);
+  const [openTenantDialog, setOpenTenantDialog] = useState<boolean>(false);
+  const [tenantDialogMode, setTenantDialogMode] = useState<string>("create");
+  const [currentTenantData, setCurrentTenantData] = useState<Tenant | null>(
+    null
+  );
 
-  const showAddTenantDrawer = () => {
-    setOpenAddTenantDialog(true);
+  const showTenantDrawer = () => {
+    setOpenTenantDialog(true);
   };
 
-  const closeAddTenantDrawer = () => {
-    setOpenAddTenantDialog(false);
+  const closeTenantDrawer = () => {
+    setOpenTenantDialog(false);
+  };
+
+  const showTenantDrawerUpdateMode = (tenantId: number) => {
+    setTenantDialogMode("update");
+    showTenantDrawer();
   };
 
   const displayLoading = loadingUserTenantList || loading;
@@ -70,7 +79,7 @@ export default function TenantView(props: any) {
   useEffect(() => {
     if (loginUserId && token) {
       fetchData({
-        auth0_id: loginUserId,
+        auth0Id: loginUserId,
         token: token
       });
     }
@@ -92,7 +101,7 @@ export default function TenantView(props: any) {
 
     if (loginUserId && token) {
       fetchData({
-        auth0_id: loginUserId,
+        auth0Id: loginUserId,
         token: token
       });
     } else {
@@ -112,7 +121,7 @@ export default function TenantView(props: any) {
         duration: 2
       });
       fetchData({
-        auth0_id: loginUserId,
+        auth0Id: loginUserId,
         token: token
       });
       setDeleteSuccess(false);
@@ -153,7 +162,10 @@ export default function TenantView(props: any) {
     {
       title: "備考",
       dataIndex: "remarks",
-      key: "4"
+      key: "4",
+      render: (remarks: string) => {
+        return remarks ? <>{remarks}</> : <>無し</>;
+      }
     },
     {
       title: "",
@@ -164,6 +176,7 @@ export default function TenantView(props: any) {
           tenantId={record.id}
           tenantName={record.name}
           handleDeleteTenant={handleDeleteTenant}
+          showTenantDrawerUpdateMode={showTenantDrawerUpdateMode}
         />
       ),
       width: 60
@@ -188,7 +201,7 @@ export default function TenantView(props: any) {
             <Col span={4}>
               <div style={{ marginTop: "60px" }}>
                 <Button
-                  onClick={showAddTenantDrawer}
+                  onClick={showTenantDrawer}
                   type="primary"
                   icon={<PlusOutlined />}
                   size="large"
@@ -196,9 +209,11 @@ export default function TenantView(props: any) {
                   店舗追加
                 </Button>
                 <TenantDrawer
-                  openAddTenantDialog={openAddTenantDialog}
-                  closeAddTenantDrawer={closeAddTenantDrawer}
+                  openTenantDialog={openTenantDialog}
+                  closeTenantDrawer={closeTenantDrawer}
                   updateTenant={updateTenant}
+                  mode={tenantDialogMode}
+                  data={currentTenantData}
                 />
               </div>
             </Col>

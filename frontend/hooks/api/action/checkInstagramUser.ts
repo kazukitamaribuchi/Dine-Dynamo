@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/utils/axiosClient";
 import { useState } from "react";
-import { API_URL } from "./urls";
+import { API_URL } from "../urls";
 import { InstagramUserBasicInfo, InstagramUserDetailError } from "@/types";
 
 interface Props {

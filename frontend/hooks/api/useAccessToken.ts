@@ -72,7 +72,7 @@ export const useAccessToken = () => {
             url: "api/auth/token/",
             method: "POST",
             data: {
-              auth0_id: loginUserId
+              auth0Id: loginUserId
             }
           });
           // console.log("再発行したトークン: ", response.data);
