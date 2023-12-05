@@ -51,6 +51,8 @@ export const createTenant = () => {
       setLoading(false);
       setError(false);
     } catch (err) {
+      // TODO エラー情報返すようになったのでそれを保持し、エラー毎にハンドリング
+
       setTenantDetail(null);
       setError(true);
       setLoading(false);

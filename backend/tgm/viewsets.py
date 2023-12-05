@@ -35,7 +35,14 @@ from .models import (
     UserSetting,
 )
 from .serializers import TenantSerializer, UserSerializer, UserSettingSerializer
-from .serializers.errors import format_serializer_error
+from .serializers.exceptions import (
+    AlreadyLinkedInstagramError,
+    CreateTenantError,
+    InvalidUserAuth0IdError,
+    LinkInstagramToTenantError,
+    UserNotExistError,
+    handle_validation_error,
+)
 from .utils.instagram import InstagramAPIHandler, check_instagram_user
 
 logger = logging.getLogger(__name__)
@@ -353,14 +360,22 @@ class TenantViewSet(viewsets.ModelViewSet):
 
             self.perform_create(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        except (
+            AlreadyLinkedInstagramError,
+            CreateTenantError,
+            InvalidUserAuth0IdError,
+            LinkInstagramToTenantError,
+            UserNotExistError,
+        ) as e:
+            logger.error(e)
+            return Response(e.data, status=status.HTTP_400_BAD_REQUEST)
+
         except serializers.ValidationError as e:
             logger.error("テナント作成でエラーが発生しました。")
             logger.error(e)
-
-            error_detail = format_serializer_error(e)
-            logger.info(error_detail)
-
-            return Response(e, status=status.HTTP_400_BAD_REQUEST)
+            err = handle_validation_error()
+            return Response(err, status=status.HTTP_400_BAD_REQUEST)
 
     def perform_create(self, serializer):
         serializer.save()

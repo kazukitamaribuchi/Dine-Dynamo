@@ -160,6 +160,9 @@ export const TenantDrawer = ({
 
   // テナント作成後の動作
   useEffect(() => {
+    console.log("tenantDetail", tenantDetail);
+    console.log("tenantDetailError", tenantDetailError);
+
     if (tenantDetailError) {
       notification.error({
         message: "エラー",

@@ -12,7 +12,13 @@ from ..models import (
     UserSetting,
 )
 from .base_serializers import DynamicFieldsModelSerializer
-from .errors import TENANT_ERROR_MSG
+from .exceptions import (
+    AlreadyLinkedInstagramError,
+    CreateTenantError,
+    InvalidUserAuth0IdError,
+    LinkInstagramToTenantError,
+    UserNotExistError,
+)
 from .fields import LastUpdatedAtField
 from .mixins import FormatedDateTimeMixin
 
@@ -142,12 +148,12 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
     def create(self, validated_data):
         auth0_id = validated_data.pop("auth0Id", None)
         if not auth0_id:
-            raise serializers.ValidationError([TENANT_ERROR_MSG["invalid_auth0_id"]])
+            raise InvalidUserAuth0IdError
 
         try:
             user = User.objects.get(auth0_id=auth0_id)
         except User.DoesNotExist:
-            raise serializers.ValidationError(TENANT_ERROR_MSG["not_exist_user"])
+            raise UserNotExistError
 
         instagramData = validated_data.pop("instagramData", None)
 
@@ -158,9 +164,7 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
                 Instagram.objects.get(
                     business_account_id=instagramData["business_account_id"]
                 )
-                raise serializers.ValidationError(
-                    [TENANT_ERROR_MSG["already_linked_instagram"]]
-                )
+                raise AlreadyLinkedInstagramError
             except Instagram.DoesNotExist:
                 pass
 
@@ -171,16 +175,14 @@ class TenantSerializer(DynamicFieldsModelSerializer, FormatedDateTimeMixin):
                 remarks=validated_data["remarks"],
             )
         except Exception:
-            raise serializers.ValidationError(TENANT_ERROR_MSG["create_tenant_error"])
+            raise CreateTenantError
 
         if instagramData:
             try:
                 Instagram.objects.create(tenant=tenant, **instagramData)
                 logger.info("テナントとインスタグラムの紐づけに成功しました。")
             except Exception:
-                raise serializers.ValidationError(
-                    TENANT_ERROR_MSG["linked_instagram_error"]
-                )
+                raise LinkInstagramToTenantError
 
         return tenant
 
