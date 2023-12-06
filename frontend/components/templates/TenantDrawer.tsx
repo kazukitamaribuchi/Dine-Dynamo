@@ -26,9 +26,9 @@ import { loginUserIdAtom } from "@/store/atoms";
 import { useAtom } from "jotai";
 import { useAccessToken } from "@/hooks/api/useAccessToken";
 import { createTenant } from "@/hooks/api/create/createTenant";
-import { isTypeOnlyImportDeclaration } from "typescript";
-import { init } from "next/dist/compiled/@vercel/og/satori";
+import { updateTenant as updateTenantAction } from "@/hooks/api/update/updateTenant";
 import { checkInstagramUser } from "@/hooks/api/action/checkInstagramUser";
+import instagram from "@/pages/instagram";
 
 const { Title, Text } = Typography;
 
@@ -37,7 +37,7 @@ interface Props {
   closeTenantDrawer: () => void;
   updateTenant: () => void;
   mode: string;
-  data: Tenant | null;
+  tenantData: Tenant | null;
 }
 
 const gridStyle: React.CSSProperties = {
@@ -51,7 +51,8 @@ export const TenantDrawer = ({
   openTenantDialog,
   closeTenantDrawer,
   updateTenant,
-  mode
+  mode,
+  tenantData
 }: Props) => {
   // テナント情報のフォーム
   const [form] = Form.useForm();
@@ -100,6 +101,74 @@ export const TenantDrawer = ({
   const { tenantDetail, tenantDetailError, loadingTenantDetail, fetchData } =
     createTenant();
 
+  // テナント追加のhooks
+  const {
+    tenantDetail: updatedTenantDetail,
+    tenantDetailError: updatedTenantDetailError,
+    loadingTenantDetail: updatedLoadingTenantDetail,
+    fetchData: updateFetchData
+  } = updateTenantAction();
+
+  const [modalTitle, setModalTitle] = useState<string>("");
+
+  const setTitle = (mode: string) => {
+    if (mode == "create") {
+      setModalTitle("Create a new tenant");
+    } else if (mode == "update") {
+      setModalTitle("Update a tenant");
+    }
+  };
+
+  useEffect(() => {
+    if (!openTenantDialog) {
+      return;
+    }
+
+    if (mode == "create") {
+      setTitle(mode);
+      setInstagramData(null);
+      form.setFieldsValue({
+        name: "",
+        remarks: ""
+      });
+      setIsOkDisabled(true);
+    } else if (mode == "update") {
+      setTitle(mode);
+      setIsOkDisabled(false);
+
+      if (tenantData) {
+        form.setFieldsValue({
+          name: tenantData.name,
+          remarks: tenantData.remarks
+        });
+
+        const instagram = tenantData.instagram;
+        if (instagram) {
+          console.log("instagram", instagram);
+
+          const instagramInfo = {
+            business_account_id: instagram.business_account_id,
+            name: instagram.name,
+            username: instagram.username,
+            access_token: instagram.access_token
+          };
+          setInstagramData(instagramInfo);
+          setIsSnsConnected(true);
+          setAccessTokenStatus("");
+          setBusinessAccountStatus("");
+
+          instagramDataForm.setFieldsValue({
+            username: instagram.username,
+            business_account_id: instagram.business_account_id,
+            access_token: instagram.access_token
+          });
+        } else {
+          setInstagramData(null);
+        }
+      }
+    }
+  }, [openTenantDialog]);
+
   // インスタグラムのユーザー確認のhooks
   const {
     userDetail,
@@ -133,6 +202,14 @@ export const TenantDrawer = ({
     }
   };
 
+  const handleSubmit = () => {
+    if (mode == "create") {
+      handleRegister();
+    } else if (mode == "update") {
+      handleUpdate();
+    }
+  };
+
   // 登録ボタン押下時の処理
   const handleRegister = async () => {
     try {
@@ -140,7 +217,6 @@ export const TenantDrawer = ({
 
       if (loginUserId) {
         fetchData({
-          mode: "create",
           auth0Id: loginUserId,
           token: token,
           name: formData.name,
@@ -155,6 +231,11 @@ export const TenantDrawer = ({
           duration: 2
         });
       }
+    } catch (err) {}
+  };
+
+  const handleUpdate = async () => {
+    try {
     } catch (err) {}
   };
 
@@ -199,7 +280,7 @@ export const TenantDrawer = ({
 
   return (
     <Drawer
-      title="Create a new tenant"
+      title={modalTitle}
       size="large"
       onClose={closeTenantDrawer}
       open={openTenantDialog}
@@ -295,10 +376,10 @@ export const TenantDrawer = ({
             <Button onClick={closeTenantDrawer}>キャンセル</Button>
             <Button
               disabled={isOkDisabled}
-              onClick={handleRegister}
+              onClick={handleSubmit}
               type="primary"
             >
-              登録
+              {mode == "create" ? "登録" : "更新"}
             </Button>
           </Space>
         </Row>
@@ -326,6 +407,7 @@ export const TenantDrawer = ({
         userDetailError={userDetailError}
         loadingUserDetail={loadingUserDetail}
         checkData={checkData}
+        mode={mode}
       />
     </Drawer>
   );

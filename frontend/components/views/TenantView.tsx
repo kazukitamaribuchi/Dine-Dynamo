@@ -67,11 +67,27 @@ export default function TenantView(props: any) {
 
   const closeTenantDrawer = () => {
     setOpenTenantDialog(false);
+    setTenantDialogMode("create");
   };
 
   const showTenantDrawerUpdateMode = (tenantId: number) => {
     setTenantDialogMode("update");
-    showTenantDrawer();
+
+    // tenantIdから該当データを取得
+    const tenantInfo = userTenantList.find((obj) => obj.id == tenantId);
+
+    if (tenantInfo) {
+      // initialValuesの設定をしてTenantDrawerへ渡す
+      setCurrentTenantData(tenantInfo);
+      showTenantDrawer();
+    } else {
+      notification.error({
+        message: "エラー",
+        description:
+          "テナント情報の取得に失敗しました。\nリロードしてください。",
+        duration: 2
+      });
+    }
   };
 
   const displayLoading = loadingUserTenantList || loading;
@@ -150,12 +166,12 @@ export default function TenantView(props: any) {
       }
     },
     {
-      title: "更新日時",
+      title: "更新日",
       dataIndex: "updated_at",
       key: "2"
     },
     {
-      title: "作成日時",
+      title: "作成日",
       dataIndex: "created_at",
       key: "3"
     },
@@ -213,7 +229,7 @@ export default function TenantView(props: any) {
                   closeTenantDrawer={closeTenantDrawer}
                   updateTenant={updateTenant}
                   mode={tenantDialogMode}
-                  data={currentTenantData}
+                  tenantData={currentTenantData}
                 />
               </div>
             </Col>

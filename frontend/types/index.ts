@@ -78,7 +78,7 @@ export type Instagram = {
 };
 
 export type Tenant = {
-  id: string;
+  id: number;
   user: string;
   name: string;
   instagram?: Instagram;
@@ -88,6 +88,7 @@ export type Tenant = {
   created_at: string;
   updated_at: string;
   last_updated_at: string;
+  remarks: string;
 };
 
 export type Facebook = {

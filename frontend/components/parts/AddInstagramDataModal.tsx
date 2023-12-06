@@ -55,6 +55,8 @@ interface Props {
     business_account_id,
     instagram_access_token
   }: checkDataType) => void;
+
+  mode: string;
 }
 
 export const AddInstagramDataModal = ({
@@ -79,7 +81,8 @@ export const AddInstagramDataModal = ({
   setUserDetail,
   userDetailError,
   loadingUserDetail,
-  checkData
+  checkData,
+  mode
 }: Props) => {
   const [loginUserId] = useAtom(loginUserIdAtom);
   const { finalToken: token, error: accessTokenError } = useAccessToken();
@@ -120,12 +123,16 @@ export const AddInstagramDataModal = ({
         });
         closeAddInstagramData();
       } else {
-        notification.error({
-          message: "エラー",
-          description: "エラーが発生しました。",
-          duration: 2
-        });
-        setIsSnsConnected(false);
+        if (mode == "update") {
+          closeAddInstagramData();
+        } else if (mode == "create") {
+          notification.error({
+            message: "エラー",
+            description: "エラーが発生しました。",
+            duration: 2
+          });
+          setIsSnsConnected(false);
+        }
       }
     } catch (err) {
       notification.error({
@@ -170,7 +177,7 @@ export const AddInstagramDataModal = ({
     }, 500);
   };
 
-  const isOkDisabled = !isSnsConnected || loadingUserDetail;
+  let isOkDisabled = !isSnsConnected || loadingUserDetail;
 
   // ユーザー情報取得結果による状態の更新
   useEffect(() => {
@@ -276,7 +283,7 @@ export const AddInstagramDataModal = ({
     >
       <Spin spinning={loadingUserDetail || cancelLoading} tip="Loading...">
         <Form form={instagramDataForm} layout="vertical">
-          <Form.Item label="username">
+          <Form.Item name="username" label="username">
             <Input
               disabled
               style={{ width: "70%" }}
