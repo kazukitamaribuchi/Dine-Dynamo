@@ -1,4 +1,8 @@
-import { Tenant, InstagramUserBasicInfoForCheckData } from "@/types";
+import {
+  Tenant,
+  InstagramUserBasicInfoForCheckData,
+  BasicAxiosError
+} from "@/types";
 import { AxiosClient } from "@/utils/axiosClient";
 import { useState } from "react";
 import { API_URL } from "../urls";
@@ -11,18 +15,9 @@ type Props = {
   instagram: InstagramUserBasicInfoForCheckData | null;
 };
 
-// type addTenantError = {
-//   code: string;
-//   response: {
-//     data: {
-//       detail:
-//     }
-//   }
-// }
-
 export const createTenant = () => {
   const [tenantDetail, setTenantDetail] = useState<Tenant | null>(null);
-  const [tenantDetailError, setError] = useState<boolean>(false);
+  const [tenantDetailError, setError] = useState<BasicAxiosError | null>(null);
   const [loadingTenantDetail, setLoading] = useState<boolean>(false);
 
   const fetchData = async ({
@@ -49,12 +44,13 @@ export const createTenant = () => {
       });
       setTenantDetail(response.data);
       setLoading(false);
-      setError(false);
+      setError(null);
     } catch (err) {
       // TODO エラー情報返すようになったのでそれを保持し、エラー毎にハンドリング
+      console.log(err);
 
       setTenantDetail(null);
-      setError(true);
+      setError(err);
       setLoading(false);
     }
   };

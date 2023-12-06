@@ -162,3 +162,17 @@ export type InstagramUserDetailError = {
     status: number;
   };
 };
+
+export type BasicAxiosError = {
+  code: string;
+  message: string;
+  name: string;
+  response: {
+    data: {
+      code: string;
+      msg: string;
+    };
+    status: number;
+    statusText: string;
+  };
+};
